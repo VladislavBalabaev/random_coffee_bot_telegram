@@ -47,5 +47,5 @@ You should use this repo as a first repo
 7. Push commit in:
 
     ```bash
-    git push upstream boris_branch
+    git push origin boris_branch
     ```
