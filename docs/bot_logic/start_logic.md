@@ -21,6 +21,21 @@ flowchart TD
     end
 
     %% ======================
+    subgraph Phase1 [📘 Phase 1: Requirements]
+        R1[Gather Requirements]
+        R2[Stakeholder Interviews]
+        R3[Create Requirement Spec]
+        R4{Requirements Approved?}
+        R5[Revise Requirements]
+        R6[Abort: Stakeholders Unavailable]
+
+        R1 --> R2 --> R3 --> R4
+        R4 -- Yes --> R_Complete[✅ Phase 1 Complete]
+        R4 -- No --> R5 --> R2
+        R5 -->|Rejected Again| R6
+    end
+
+    %% ======================
     subgraph Phase2 [🧩 Phase 2: Design]
         D1[Create Architecture Diagram]
         D2[Create UI Wireframes]
