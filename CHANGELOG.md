@@ -32,3 +32,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Core telegram bot architecture
 - Requirements
 - Docker setup
+- Notes for developers
