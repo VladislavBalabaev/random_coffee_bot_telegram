@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased] - YYYY-MM-DD
+## [Unreleased] - YYYY-MM-DD - Developer
 ### Added
 - Nothing yet
 
@@ -21,7 +21,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0] - 2025-04-19
+## [0.1.0] - 2025-04-19 - Boris
+### Added
+- Manual of how to contribute
+
+## [0.1.0] - 2025-04-19 - Vlad
 ### Added
 - Initial release of NespressoBot
 - Admin/user/staff handlers
