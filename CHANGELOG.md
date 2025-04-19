@@ -25,4 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release of NespressoBot
 - Admin/user/staff handlers
-- Core Telegram bot architecture
+- Core telegram bot architecture
+- Requirements
+- Docker setup
