@@ -27,10 +27,14 @@ lint.select = [
 lint.ignore = [
   "E501",   # Line length (handled by formatter)
   "S101",   # Allow `assert` in tests
-  "B008",   # Don't restrict default args (can be noisy)
+  "N802",   # ignore: function name should be lowercase
 ]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
 combine-as-imports = true
 split-on-trailing-comma = true
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+strict = true

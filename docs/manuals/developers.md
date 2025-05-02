@@ -8,6 +8,9 @@ See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a
 
 ```bash
 python -m venv venv
+vim venv/bin/activate
+# Then add line: export PYTHONPATH="$VIRTUAL_ENV/src"
+
 source venv/bin/activate
 
 pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
@@ -87,7 +90,7 @@ Happy contributing! 💙
 
 ### Format & Lint
 
-```basn
+```bash
 black src/ tests/
 
 ruff check src/ tests/ --fix

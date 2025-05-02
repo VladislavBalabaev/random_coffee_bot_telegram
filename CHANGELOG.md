@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Setup info in developers manual
 - `ruff` linting
 - `black` formatting
+- logging system
+- .env reading
 
 ### Changed
 - `src` structure
