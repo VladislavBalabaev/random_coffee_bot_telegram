@@ -83,13 +83,14 @@ Happy contributing! 💙
 
 ### Via Docker Container
 
-## Pre-Commit
+## Pre-Commit Actions
 
 ### Format & Lint
 
 ```basn
-ruff format src/ tests/
-ruff check src/ tests/
+black src/ tests/
+
+ruff check src/ tests/ --fix
 ```
 
 ### Type Check
@@ -98,7 +99,7 @@ ruff check src/ tests/
 mypy src/
 ```
 
-### Run Tests (Optional)
+### Run Tests
 
 ```bash
 pytest

@@ -1,0 +1,36 @@
+[tool.black]
+target-version = ["py312"]
+line-length = 88
+skip-string-normalization = false
+
+[tool.ruff]
+target-version = "py312"
+src = ["src", "tests"]
+
+# Linting rules to enable
+lint.select = [
+  "E",    # pycodestyle (style errors)
+  "F",    # pyflakes (logic errors)
+  "B",    # flake8-bugbear (common bugs, unsafe code)
+  "I",    # isort (import sorting)
+  "UP",   # pyupgrade (modern syntax)
+  "N",    # pep8-naming (consistent naming)
+  "S",    # flake8-bandit (security)
+  "C4",   # flake8-comprehensions (comprehension optimizations)
+  "DTZ",  # flake8-datetimez (timezone-aware datetimes)
+  "T20",  # flake8-print (ban print/debug)
+  "Q",    # flake8-quotes (quote consistency)
+  "PL",   # pylint rules (consistency, complexity)
+]
+
+# Rules to ignore
+lint.ignore = [
+  "E501",   # Line length (handled by formatter)
+  "S101",   # Allow `assert` in tests
+  "B008",   # Don't restrict default args (can be noisy)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+combine-as-imports = true
+split-on-trailing-comma = true
