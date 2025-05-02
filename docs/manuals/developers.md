@@ -1,5 +1,18 @@
 # Notes for Developers
 
+## Setup
+
+See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a better dev experience.
+
+### Via Local Environment
+
+```bash
+python -m venv venv
+source venv/bin/activate
+
+pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+```
+
 ## 🤝 How to Contribute
 
 We welcome contributions to the project!  
@@ -68,15 +81,9 @@ Here's how to get started — both through GitHub and your terminal.
 
 Happy contributing! 💙
 
-## Code Quality Guide
+### Via Docker Container
 
-See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a better dev experience.
-
-Install all dev tools:
-
-```bash
-pip install -r requirements.txt -r requirements-dev.txt
-```
+## Pre-Commit
 
 ### Format & Lint
 
