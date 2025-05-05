@@ -1,6 +1,6 @@
 from pathlib import Path
 
-DIR_ROOT = Path(__file__).resolve().parent.parent.parent
+DIR_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 DIR_DATA = DIR_ROOT / "data"
 DIR_LOGS = DIR_ROOT / "data" / "logs"

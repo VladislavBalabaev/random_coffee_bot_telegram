@@ -107,3 +107,19 @@ mypy src/
 ```bash
 pytest
 ```
+
+## Scripts
+
+### To work with ChatGPT
+
+Simple recursive script to walk through files and concatenate their contents with headers.
+
+```bash
+python scripts/combine_files.py
+```
+
+Additionally, you can use `tree` to show ChatGPT project's structure:
+
+```bash
+tree src/nespresso/
+```

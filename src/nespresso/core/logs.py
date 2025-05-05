@@ -6,8 +6,9 @@ from queue import Queue
 from typing import Any
 
 from colorlog import ColoredFormatter
+from pythonjsonlogger.jsonlogger import JsonFormatter  # type: ignore[attr-defined]
 
-from nespesso.core.configs.paths import PATH_LOGS
+from nespresso.core.configs.paths import PATH_LOGS
 
 _LOGGING_LISTENER: QueueListener
 
@@ -25,8 +26,11 @@ console_format = ColoredFormatter(
 )
 
 
-file_format = logging.Formatter(
-    "%(levelname)-8s :: %(name)-25s :: %(asctime)s :: %(message)s :: (%(filename)s:%(lineno)d)"
+# file_format = logging.Formatter(
+#     "%(levelname)-8s :: %(name)-25s :: %(asctime)s :: %(message)s :: (%(filename)s:%(lineno)d)"
+# )
+file_format = JsonFormatter(
+    fmt="%(asctime)s %(levelname)s %(name)s %(message)s %(filename)s %(lineno)d",
 )
 
 

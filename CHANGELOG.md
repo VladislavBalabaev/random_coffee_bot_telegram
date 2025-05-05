@@ -21,9 +21,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-05-05 - Vlad
+### Added
+- JSON file logging
+- script for combining all python code into single .txt
+- simple DB structure
+- service structure
+- dependency intergration structure
+
+### Changed
+- whole src/ structure
+- MongoDB to Postgres & SQLAlchemy
+- json logging
+
+### Fixed
+- library's name
+
 ## [0.1.0] - 2025-05-02 - Vlad
 ### Added
-- Setup info in developers manual
+- setup info in developers manual
 - `ruff` linting
 - `black` formatting
 - logging system
@@ -35,13 +51,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.1.0] - 2025-04-19 - Boris
 ### Added
-- Manual of how to contribute
+- manual of how to contribute
 
 ## [0.1.0] - 2025-04-19 - Vlad
 ### Added
-- Initial release of NespressoBot
-- Admin/user/staff handlers
-- Core telegram bot architecture
-- Requirements
-- Docker setup
-- Notes for developers
+- initial release of NespressoBot
+- admin/user/staff handlers
+- core telegram bot architecture
+- requirements
+- docker setup
+- notes for developers

@@ -1,7 +1,7 @@
 import asyncio
 
-from nespesso.bot.creation import bot, dp
-from nespesso.core import logs
+from nespresso.bot.creator import bot, dp
+from nespresso.core import logs
 
 # from db.connect import close_mongo_connection, setup_mongo_connection
 # from handlers.admin import admin
