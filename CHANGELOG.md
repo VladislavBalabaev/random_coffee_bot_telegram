@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-05-07 - Vlad
+### Added
+- User models for DB and pydantic
+
 ## [0.1.0] - 2025-05-05 - Vlad
 ### Added
 - JSON file logging
@@ -32,7 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - whole src/ structure
 - MongoDB to Postgres & SQLAlchemy
-- json logging
+- json logging, file rotation after 10MB, up to 12 log files stored
 
 ### Fixed
 - library's name

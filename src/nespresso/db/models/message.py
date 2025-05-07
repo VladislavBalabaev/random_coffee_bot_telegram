@@ -15,7 +15,10 @@ class MessageSide(Enum):
 class Message(Base):
     __tablename__ = "messages"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
+    chat_id: Mapped[int] = mapped_column(
+        BigInteger, primary_key=True, index=True
+    )  # what is key in this table??
+
     time: Mapped[datetime.datetime] = mapped_column(
         DateTime, default=datetime.datetime.now(tz=datetime.UTC)
     )

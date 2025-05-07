@@ -16,6 +16,10 @@ source venv/bin/activate
 pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
 ```
 
+### Via Docker Container
+
+...
+
 ## 🤝 How to Contribute
 
 We welcome contributions to the project!  
@@ -47,44 +51,7 @@ Here's how to get started — both through GitHub and your terminal.
    git remote -v
    ```
 
-### 💻 Workflow in Terminal
-
-1. Create a new branch for your changes
-
-   ```bash
-   git checkout -b feature/your-change-name
-   ```
-
-2. Make edits, for example:
-
-   ```bash
-   nano docs/bot_logic/start_logic.md
-   ```
-
-3. Stage your changes
-
-   ```bash
-   git add docs/bot_logic/start_logic.md
-   ```
-
-4. Commit
-
-   ```bash
-   git commit -m "Improve start_logic.md docs"
-   ```
-
-5. Push to your fork
-
-   ```bash
-   git push origin feature/your-change-name
-   ```
-
-6. Open a Pull Request  
-   Go to your fork on GitHub, and you’ll see a “Compare & pull request” button.
-
 Happy contributing! 💙
-
-### Via Docker Container
 
 ## Pre-Commit Actions
 
