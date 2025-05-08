@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 
 from aiogram import types
 from aiogram.exceptions import TelegramForbiddenError
@@ -6,17 +7,26 @@ from aiogram.exceptions import TelegramForbiddenError
 from nespresso.bot.creator import bot
 from nespresso.core.services import user_ctx
 
-_BLOCKED: str = " \033[91m[Blocked]\033[0m"
-_FAIL: str = " \033[91m[Fail]\033[0m"
-_PENDING: str = " \033[91m[Pending]\033[0m"
-_ZERO_MESSAGE: str = " \033[91m[ZeroMessage]\033[0m"
+
+class MessageContext(Enum):
+    No = ""
+    Blocked = " \033[91m[Blocked]\033[0m"
+    NoText = " \033[90m[NoText]\033[0m"
+    Fail = " \033[91m[Fail]\033[0m"
+    Pending = " \033[90m[Pending]\033[0m"
+    ZeroMessage = " \033[90m[ZeroMessage]\033[0m"
+
+
+class MessageIO(Enum):
+    In = "\033[36m<<\033[0m"
+    Out = "\033[35m>>\033[0m"
 
 
 async def SendMessage(
     chat_id: int,
     text: str,
     reply_markup: types.ReplyKeyboardMarkup | types.ReplyKeyboardRemove | None = None,
-    on_fail: bool = False,
+    context: MessageContext = MessageContext.No,
 ) -> None:
     """
     Sends a message to the user, logs it, and updates the message history in DB.
@@ -31,17 +41,17 @@ async def SendMessage(
 
         blocked = ""
     except TelegramForbiddenError:
-        blocked = _BLOCKED
+        blocked = MessageContext.Blocked.value
 
     username = await ctx.GetTgUsername(chat_id)
-    fail = _FAIL if on_fail else ""
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) \033[36m<<\033[0m{blocked}{fail} {repr(text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{blocked}{context.value} {repr(text)}"
     )
 
 
 async def ReceiveMessage(
-    message: types.Message, on_pending: bool = False, on_zero_message: bool = False
+    message: types.Message,
+    context: MessageContext = MessageContext.No,
 ) -> None:
     """
     Logs the incoming message, and updates the message history in DB.
@@ -67,7 +77,9 @@ async def ReceiveMessage(
             return
 
         await SendMessage(
-            chat_id=message.chat.id, text="Бот определяет только текст", on_fail=True
+            chat_id=message.chat.id,
+            text="Бот определяет только текст",
+            context=MessageContext.NoText,
         )
 
     text = str(message.text)
@@ -78,11 +90,9 @@ async def ReceiveMessage(
     await ctx.RegisterIncomingMessage(chat_id, text)
 
     username = await ctx.GetTgUsername(chat_id)
-    pending = _PENDING if on_pending else ""
-    zm = _ZERO_MESSAGE if on_zero_message else ""
 
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) \033[35m>>\033[0m{pending}{zm} {repr(message.text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In}{context.value} {repr(message.text)}"
     )
 
     await CheckNewUser(message)
