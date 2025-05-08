@@ -20,6 +20,10 @@ class UserService:
         )
 
     # ----- Read -----
+    async def CheckTgUserExists(self, chat_id: int) -> bool:
+        result = await self.user_repo.GetTgUserColumn(chat_id, TgUser.chat_id)
+
+        return result is not None
 
     async def GetTgUser(self, chat_id: int) -> TgUser | None:
         return await self.user_repo.GetTgUser(chat_id)

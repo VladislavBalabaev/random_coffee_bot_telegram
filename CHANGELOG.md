@@ -25,9 +25,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - SQLAlchemy repositories functionality
 - User context service functionality
+- IO stream for telegram bot's messaging
 
 ### Changed
-- Updated structure of DB models
+- Structure of DB models
 
 ## [0.1.0] - 2025-05-07 - Vlad
 ### Added

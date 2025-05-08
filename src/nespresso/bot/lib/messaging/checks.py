@@ -13,9 +13,4 @@ def checker(func: Callable[P, R]) -> Callable[P, R]:
     return wrapper
 
 
-def new_user(func: Callable[P, R]) -> Callable[P, R]:
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        ...
-        return func(*args, **kwargs)
-
-    return wrapper
+# TODO: check_finished_profile
