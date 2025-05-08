@@ -1,22 +1,34 @@
+from nespresso.db.models.message import Message
 from nespresso.services.message import MessageService
 from nespresso.services.user import UserService
 
 
-class UserContextService:
+class UserContextService(UserService, MessageService):
+    """
+    Combines UserService and MessageService into a single context service.
+    Inherits methods from both services.
+    """
+
     def __init__(self, user_service: UserService, message_service: MessageService):
         self.user_service = user_service
-        self.messaging_service = message_service
+        self.message_service = message_service
 
-    async def RegisterIncoming(self, user_id: int, text: str, username: str) -> None:
-        # await self.user_service.upsert_user(user_id, username)
-        # await self.messaging_service.insert_message(user_id, text, "in")
-        ...
+    async def GetRecentMessages(
+        self,
+        chat_id: int | None = None,
+        tg_username: str | None = None,
+        nes_id: int | None = None,
+        nes_email: str | None = None,
+        limit: int = 10,
+    ) -> list[Message]:
+        if chat_id is None:
+            chat_id = await self.user_repo.GetChatIdBy(
+                tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
+            )
 
-    async def RegisterOutgoing(self, user_id: int, text: str) -> None: ...
+            if chat_id is None:
+                return []
 
-    async def UsernameById(self, user_id: int) -> str:
-        return "None"
+        result = await self.message_repo.GetRecentMessages(chat_id, limit)
 
-    async def AddBotMessage(self, user_id: int, text: str) -> None: ...
-
-    async def AddUserMessage(self, user_id: int, text: str) -> None: ...
+        return result

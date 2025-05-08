@@ -20,11 +20,20 @@ def CheckColumnBelongsToModel(
         )
 
 
+def CheckOnlyOneArgProvided(**kwargs: Any) -> None:
+    provided = [key for key, value in kwargs.items() if value is not None]
+
+    if len(provided) != 1:
+        raise ValueError(f"More than one argument is provided: {', '.join(provided)}.")
+
+
 class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def CreateNewTgUser(
+    # ----- Create -----
+
+    async def CreateTgUser(
         self, chat_id: int, username: str | None = None, full_name: str | None = None
     ) -> None:
         try:
@@ -65,50 +74,68 @@ class UserRepository:
 
         await self.session.commit()
 
-    async def GetIds(
-        self,
-        chat_id: int | None = None,
-        nes_id: int | None = None,
-    ) -> TgUser | None:
-        if sum(arg is not None for arg in [chat_id, nes_id]) != 1:
-            raise ValueError("Exactly one of uid, chat_id, or nes_id must be provided.")
+    # ----- Read -----
 
-        if chat_id is not None:
-            condition = TgUser.chat_id == chat_id
-        else:
-            condition = TgUser.nes_id == nes_id
-
-        result = await self.session.execute(
-            select(TgUser.chat_id, TgUser.nes_id).where(condition)
-        )
-
-        return result.scalar_one_or_none()
-
-    async def GetTgUserInfo(self, chat_id: int) -> TgUser | None:
+    async def GetTgUser(self, chat_id: int) -> TgUser | None:
         result = await self.session.execute(
             select(TgUser).where(TgUser.chat_id == chat_id)
         )
 
         return result.scalar_one_or_none()
 
-    async def GetNesUserInfo(self, nes_id: int) -> NesUser | None:
+    async def GetTgUserColumn(
+        self, chat_id: int, column: InstrumentedAttribute[Any]
+    ) -> Any | None:
+        CheckColumnBelongsToModel(column, TgUser)
+
+        result = await self.session.execute(
+            select(getattr(TgUser, column.key)).where(TgUser.chat_id == chat_id)
+        )
+
+        return result.scalar_one_or_none()
+
+    async def GetNesUser(self, nes_id: int) -> NesUser | None:
         result = await self.session.execute(
             select(NesUser).where(NesUser.nes_id == nes_id)
         )
 
         return result.scalar_one_or_none()
 
-    # can be used to check wether username exists
-    async def CheckTgUserValueExists(
-        self, column: InstrumentedAttribute[Any], value: Any
-    ) -> bool:
-        CheckColumnBelongsToModel(column, TgUser)
+    async def GetNesUserColumn(
+        self, nes_id: int, column: InstrumentedAttribute[Any]
+    ) -> Any | None:
+        CheckColumnBelongsToModel(column, NesUser)
 
-        result = await self.session.execute(select(column).where(column == value))
+        result = await self.session.execute(
+            select(getattr(NesUser, column.key)).where(NesUser.nes_id == nes_id)
+        )
 
-        return result.scalar_one_or_none() is not None
+        return result.scalar_one_or_none()
 
-    async def UpdateTgUserColumn(
+    async def GetChatIdBy(
+        self,
+        tg_username: str | None = None,
+        nes_id: int | None = None,
+        nes_email: str | None = None,
+    ) -> int | None:
+        CheckOnlyOneArgProvided(
+            tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
+        )
+
+        if tg_username is not None:
+            condition = TgUser.username == tg_username
+        elif nes_id is not None:
+            condition = TgUser.nes_id == nes_id
+        elif nes_email is not None:
+            condition = TgUser.nes_email == nes_email
+
+        result = await self.session.execute(select(TgUser.chat_id).where(condition))
+
+        return result.scalar_one_or_none()
+
+    # ----- Update -----
+
+    async def UpdateTgUser(
         self, chat_id: int, column: InstrumentedAttribute[Any], value: Any
     ) -> None:
         CheckColumnBelongsToModel(column, TgUser)
@@ -128,3 +155,5 @@ class UserRepository:
             logging.error(
                 f"Failed to update: {column}={value}. No TgUser(chat_id={chat_id}) found."
             )
+
+    # ----- Delete -----

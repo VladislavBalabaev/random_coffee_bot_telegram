@@ -12,17 +12,15 @@ class TgUser(Base):
     chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
 
     nes_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=True)
-    email: Mapped[str] = mapped_column(String, index=True, nullable=True)
-
+    nes_email: Mapped[str] = mapped_column(String, index=True, nullable=True)
     username: Mapped[str] = mapped_column(String, index=True, nullable=True)
+
     full_name: Mapped[str] = mapped_column(String, nullable=True)
 
     blocked_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     blocked_by_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    active_profile: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )  # ?
+    active_profile: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     active_matching: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False
     )
