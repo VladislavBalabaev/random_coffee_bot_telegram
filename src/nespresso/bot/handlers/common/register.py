@@ -3,7 +3,7 @@ from aiogram import Dispatcher
 from nespresso.bot.handlers.common.commands import cancel, zero
 
 
-def register_handler_cancel(dp: Dispatcher) -> None:
+def RegisterHandlerCancel(dp: Dispatcher) -> None:
     """
     Registers the handler for the /cancel command, allowing users to cancel ongoing operations.
     """
@@ -12,7 +12,7 @@ def register_handler_cancel(dp: Dispatcher) -> None:
     )
 
 
-def register_handler_zero_message(dp: Dispatcher) -> None:
+def RegisterHandlerZeroMessage(dp: Dispatcher) -> None:
     """
     Registers the handler for cases when no specific command or message is recognized.
     """
