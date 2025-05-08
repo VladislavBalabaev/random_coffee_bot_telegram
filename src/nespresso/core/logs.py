@@ -71,8 +71,9 @@ async def LoggerSetup() -> None:
     aiogram_logger = logging.getLogger("aiogram")
     aiogram_logger.setLevel(logging.INFO)
 
-    pymongo_logger = logging.getLogger("pymongo")
-    pymongo_logger.setLevel(logging.INFO)
+    # SQLAlchemy logger
+    sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
+    sqlalchemy_logger.setLevel(logging.INFO)
 
     console_handler = StreamHandler()
     console_handler.setLevel(logging.INFO)
@@ -95,9 +96,9 @@ async def LoggerStart() -> None:
     await LoggerSetup()
 
     _LOGGING_LISTENER.start()
-    logging.info("# Logger started.")
+    logging.info("# Logging started.")
 
 
 async def LoggerShutdown() -> None:
-    logging.info("# Logger stopped.")
+    logging.info("# Logging stopped.")
     _LOGGING_LISTENER.stop()

@@ -21,9 +21,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-05-08 - Vlad
+### Added
+- SQLAlchemy repositories functionality
+
+### Changed
+- Updated structure of DB models
+
 ## [0.1.0] - 2025-05-07 - Vlad
 ### Added
-- User models for DB and pydantic
+- Models for DB and pydantic
 
 ## [0.1.0] - 2025-05-05 - Vlad
 ### Added
