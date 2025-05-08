@@ -6,28 +6,26 @@ from sqlalchemy.orm import Mapped, mapped_column
 from nespresso.db.base import Base
 
 
-class User(Base):
-    __tablename__ = "user"
-
-    uuid: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
-    chat_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    nes_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-
-
 class TgUser(Base):
     __tablename__ = "tg_user"
 
-    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(String, nullable=True)
+    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
 
-    username: Mapped[str] = mapped_column(String, nullable=True)
+    nes_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=True)
+    email: Mapped[str] = mapped_column(String, index=True, nullable=True)
+
+    username: Mapped[str] = mapped_column(String, index=True, nullable=True)
     full_name: Mapped[str] = mapped_column(String, nullable=True)
 
-    blocked_bot: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    blocked_by_bot: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    blocked_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    blocked_by_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    active_profile: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    active_matching: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    active_profile: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )  # ?
+    active_matching: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
@@ -38,10 +36,10 @@ class TgUser(Base):
 class NesUser(Base):
     __tablename__ = "nes_user"
 
-    nes_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    nes_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
 
     # Personal info
+    name: Mapped[str] = mapped_column(String, nullable=False)
     address: Mapped[str] = mapped_column(String, nullable=True)
     city: Mapped[str] = mapped_column(String, nullable=True)
     region: Mapped[str] = mapped_column(String, nullable=True)

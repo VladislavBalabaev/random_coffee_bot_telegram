@@ -1,4 +1,4 @@
-import datetime
+from datetime import UTC, datetime
 from enum import Enum
 
 from sqlalchemy import BigInteger, DateTime, Enum as SqlEnum, String
@@ -13,14 +13,13 @@ class MessageSide(Enum):
 
 
 class Message(Base):
-    __tablename__ = "messages"
+    __tablename__ = "message"
 
-    chat_id: Mapped[int] = mapped_column(
-        BigInteger, primary_key=True, index=True
-    )  # what is key in this table??
-
-    time: Mapped[datetime.datetime] = mapped_column(
-        DateTime, default=datetime.datetime.now(tz=datetime.UTC)
+    message_id: Mapped[int] = mapped_column(
+        BigInteger, primary_key=True, autoincrement=True
     )
+
+    time: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(tz=UTC))
+    chat_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
     side: Mapped[MessageSide] = mapped_column(SqlEnum(MessageSide), nullable=False)
     text: Mapped[str] = mapped_column(String, nullable=False)
