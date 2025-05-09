@@ -11,17 +11,17 @@ from nespresso.core.services import user_ctx
 class MessageContext(Enum):
     No = ""
     Blocked = " \033[91m[Blocked]\033[0m"
-    NoText = " \033[90m[NoText]\033[0m"
+    BadRequest = " \033[91m[BadRequest]\033[0m"
     UserFailed = " \033[91m[UserFailed]\033[0m"
+    Document = " \033[92m[Document]\033[0m"
     Pending = " \033[90m[Pending]\033[0m"
     ZeroMessage = " \033[90m[ZeroMessage]\033[0m"
-    Document = " \033[92m[Document]\033[0m"
-    BadRequest = " \033[92m[BadRequest]\033[0m"
+    NoText = " \033[90m[NoText]\033[0m"
 
 
 class MessageIO(Enum):
-    In = "\033[36m<<\033[0m"
-    Out = "\033[35m>>\033[0m"
+    In = "\033[35m>>\033[0m"
+    Out = "\033[36m<<\033[0m"
 
 
 async def SendDocument(
@@ -44,7 +44,7 @@ async def SendDocument(
 
     username = await ctx.GetTgUsername(chat_id)
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{addendum}{MessageContext.Document.value} {caption}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum}{MessageContext.Document.value} {caption}"
     )
 
 
@@ -69,7 +69,7 @@ async def SendMessage(
 
     username = await ctx.GetTgUsername(chat_id)
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{addendum}{context.value} {repr(text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum}{context.value} {repr(text)}"
     )
 
 
@@ -114,7 +114,7 @@ async def ReceiveMessage(
     username = await ctx.GetTgUsername(chat_id)
 
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In}{context.value} {repr(message.text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {repr(message.text)}"
     )
 
     await CheckText(message)

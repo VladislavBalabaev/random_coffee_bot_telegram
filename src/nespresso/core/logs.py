@@ -15,7 +15,7 @@ _LOGGING_LISTENER: QueueListener
 
 console_format = ColoredFormatter(
     "%(log_color)s%(levelname)-8s%(reset)s :: %(asctime)s.%(msecs)03d :: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
+    datefmt="%m-%d %H:%M:%S",
     reset=True,
     log_colors={
         "DEBUG": "cyan",
@@ -71,9 +71,8 @@ async def LoggerSetup() -> None:
     aiogram_logger = logging.getLogger("aiogram")
     aiogram_logger.setLevel(logging.INFO)
 
-    # SQLAlchemy logger
     sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
-    sqlalchemy_logger.setLevel(logging.INFO)
+    sqlalchemy_logger.setLevel(logging.WARNING)
 
     console_handler = StreamHandler()
     console_handler.setLevel(logging.INFO)

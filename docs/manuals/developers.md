@@ -29,43 +29,25 @@ Being in `nespressobot/` directory:
 ```bash
 sudo systemctl start docker
 
-sh scripts/run.sh
+docker compose stop
+docker compose down
 
-python -m nespresso
+docker compose build #--no-cache
+docker compose up --detach
+# OR use `sh scripts/run.sh` for these 4 commands
+
+# python -m nespresso
 ```
 
-## 🤝 How to Contribute
+#### Notes
 
-We welcome contributions to the project!  
-Here's how to get started — both through GitHub and your terminal.
+Note that the bot started in docker _synchronizes_ Postgres DB & logs with local directory via channeling.
 
-### 📌 GitHub Setup
+Also, you can view logs from docker via:
 
-1. Fork the repository  
-   Visit [the main repo](https://github.com/VladislavBalabaev/random_coffee_bot_telegram) and click **"Fork"** (top-right corner).
-
-2. Clone your fork
-
-   ```bash
-   git clone https://github.com/<your-username>/random_coffee_bot_telegram.git
-   cd random_coffee_bot_telegram
-   ```
-
-3. Add the original repo as `upstream`
-
-   This keeps your fork in sync with the source:
-
-   ```bash
-   git remote add upstream https://github.com/VladislavBalabaev/random_coffee_bot_telegram.git
-   ```
-
-4. Check remotes
-
-   ```bash
-   git remote -v
-   ```
-
-Happy contributing! 💙
+```bash
+docker compose logs -f bot
+```
 
 ## Pre-Commit Actions
 
@@ -104,3 +86,36 @@ Additionally, you can use `tree` to show ChatGPT project's structure:
 ```bash
 tree src/nespresso/
 ```
+
+## How to Contribute
+
+We welcome contributions to the project!  
+Here's how to get started — both through GitHub and your terminal.
+
+### GitHub Setup
+
+1. Fork the repository  
+   Visit [the main repo](https://github.com/VladislavBalabaev/random_coffee_bot_telegram) and click **"Fork"** (top-right corner).
+
+2. Clone your fork
+
+   ```bash
+   git clone https://github.com/<your-username>/random_coffee_bot_telegram.git
+   cd random_coffee_bot_telegram
+   ```
+
+3. Add the original repo as `upstream`
+
+   This keeps your fork in sync with the source:
+
+   ```bash
+   git remote add upstream https://github.com/VladislavBalabaev/random_coffee_bot_telegram.git
+   ```
+
+4. Check remotes
+
+   ```bash
+   git remote -v
+   ```
+
+Happy contributing! 💙

@@ -14,7 +14,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data/postgresql/data:/var/lib/postgresql/data
+      - ./postgres_data:/var/lib/postgresql/data
 
   bot:
     build:
@@ -25,10 +25,10 @@ services:
       - ./logs:/usr/src/app/logs
     networks:
       - nespresso_network
-    stdin_open: true  # Keeps STDIN open
-    tty: true         # Allocates a pseudo-TTY
-    # command: python -m nespresso
-    command: bash
+    stdin_open: true              # Keeps STDIN open
+    tty: true                     # Allocates a pseudo-TTY
+    command: python -m nespresso
+    # command: bash
 
 networks:
   nespresso_network:

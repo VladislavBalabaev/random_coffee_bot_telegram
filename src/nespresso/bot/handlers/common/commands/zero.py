@@ -20,5 +20,5 @@ async def ZeroMessage(message: types.Message) -> None:
 
     await SendMessage(
         message.chat.id,
-        "Ты не находишься в какой-либо команде\nВыбери что-нибудь из **Menu**",
+        "Ты не находишься в какой-либо команде\nВыбери из Menu",
     )
