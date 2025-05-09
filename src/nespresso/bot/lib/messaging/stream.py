@@ -12,7 +12,7 @@ class MessageContext(Enum):
     No = ""
     Blocked = " \033[91m[Blocked]\033[0m"
     NoText = " \033[90m[NoText]\033[0m"
-    Fail = " \033[91m[Fail]\033[0m"
+    UserFailed = " \033[91m[UserFailed]\033[0m"
     Pending = " \033[90m[Pending]\033[0m"
     ZeroMessage = " \033[90m[ZeroMessage]\033[0m"
     Document = " \033[92m[Document]\033[0m"
@@ -66,7 +66,6 @@ async def SendMessage(
         addendum = MessageContext.Blocked.value
     except TelegramBadRequest:
         addendum = MessageContext.BadRequest.value
-        
 
     username = await ctx.GetTgUsername(chat_id)
     logging.info(

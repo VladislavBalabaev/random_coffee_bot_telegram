@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Timezones in DB models
+- DB Repositories work with context of session
 
 ## [0.1.0] - 2025-05-08 - Vlad
 ### Added

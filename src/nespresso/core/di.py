@@ -7,11 +7,10 @@ from nespresso.services.user_context import UserContextService
 
 
 async def GetUserContextService() -> UserContextService:
-    async with AsyncSessionLocal() as session:
-        user_repo = UserRepository(session)
-        message_repo = MessageRepository(session)
+    user_repo = UserRepository(AsyncSessionLocal)
+    message_repo = MessageRepository(AsyncSessionLocal)
 
-        user_service = UserService(user_repo)
-        message_service = MessageService(message_repo)
+    user_service = UserService(user_repo)
+    message_service = MessageService(message_repo)
 
-        return UserContextService(user_service, message_service)
+    return UserContextService(user_service, message_service)

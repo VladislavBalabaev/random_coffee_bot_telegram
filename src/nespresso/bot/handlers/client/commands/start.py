@@ -16,5 +16,5 @@ async def CommandStart(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
 
     await SendMessage(
-        chat_id=message.chat.id, text="приветики", context=MessageContext.Fail
+        chat_id=message.chat.id, text="приветики", context=MessageContext.UserFailed
     )
