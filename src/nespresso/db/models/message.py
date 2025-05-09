@@ -19,7 +19,7 @@ class Message(Base):
         BigInteger, primary_key=True, autoincrement=True
     )
 
-    time: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(tz=UTC))
+    time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(tz=UTC))
     chat_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
     side: Mapped[MessageSide] = mapped_column(SqlEnum(MessageSide), nullable=False)
     text: Mapped[str] = mapped_column(String, nullable=False)
