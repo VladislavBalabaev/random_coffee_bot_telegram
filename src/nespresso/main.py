@@ -1,42 +1,32 @@
 import asyncio
 
 from nespresso.bot.creator import bot, dp
-
-# from handlers.admin import admin
-# from handlers.admin.send_on import send_shutdown, send_startup
-# from handlers.client import client
-# from handlers.client.menu import set_commands
-# from handlers.common import common_handlers
-# from handlers.common.pending import notify_users_with_pending_updates
 from nespresso.bot.handlers.common.register import (
     RegisterHandlerCancel,
     RegisterHandlerZeroMessage,
 )
+from nespresso.bot.lib.notifications.admin import NotifyOnShutdown, NotifyOnStartup
+from nespresso.bot.lib.notifications.erroring import error_handling
+from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
 from nespresso.core import logs
 
+# from handlers.admin import admin
+# from handlers.client import client
+# from handlers.client.menu import set_commands
 
-async def OnStartUp() -> None:
-    """
-    Initializes logging, database connection, sends startup notifications, and handles pending updates.
-    """
+
+async def OnStartup() -> None:
     await logs.LoggerStart()
-    # await setup_mongo_connection()
-    # await send_startup()
-    # await test_emails()
-    # await notify_users_with_pending_updates()
+    await NotifyOnStartup()
+    await ProcessPendingUpdates()
 
 
 async def OnShutdown() -> None:
-    """
-    Sends shutdown notifications and closes the database connection.
-    """
-    # await send_shutdown()
-
-    # close_mongo_connection()
-
+    await NotifyOnShutdown()
     await logs.LoggerShutdown()
 
 
+@error_handling
 async def main() -> None:
     """
     Registers handlers, sets commands, and starts polling for updates.
@@ -47,7 +37,7 @@ async def main() -> None:
         # client.register_handlers_client(dp)
         RegisterHandlerCancel(dp)
 
-        dp.startup.register(OnStartUp)
+        dp.startup.register(OnStartup)
         dp.shutdown.register(OnShutdown)
 
         # await set_commands(bot)
