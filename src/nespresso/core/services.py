@@ -1,3 +1,3 @@
 from nespresso.core.di import GetUserContextService
 
-user_ctx = GetUserContextService()
+user_ctx = GetUserContextService

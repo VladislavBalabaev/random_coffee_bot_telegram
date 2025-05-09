@@ -2,7 +2,7 @@ import logging
 from enum import Enum
 
 from aiogram import types
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 
 from nespresso.bot.creator import bot
 from nespresso.core.services import user_ctx
@@ -16,6 +16,7 @@ class MessageContext(Enum):
     Pending = " \033[90m[Pending]\033[0m"
     ZeroMessage = " \033[90m[ZeroMessage]\033[0m"
     Document = " \033[92m[Document]\033[0m"
+    BadRequest = " \033[92m[BadRequest]\033[0m"
 
 
 class MessageIO(Enum):
@@ -28,20 +29,22 @@ async def SendDocument(
     document: types.FSInputFile,
     caption: str | None = None,
 ) -> None:
-    ctx = await user_ctx
+    addendum = ""
+
+    ctx = await user_ctx()
 
     try:
         await bot.send_document(chat_id=chat_id, document=document, caption=caption)
 
         await ctx.RegisterOutgoingMessage(chat_id, f"[Document] {caption}")
-
-        blocked = ""
     except TelegramForbiddenError:
-        blocked = MessageContext.Blocked.value
+        addendum = MessageContext.Blocked.value
+    except TelegramBadRequest:
+        addendum = MessageContext.BadRequest.value
 
     username = await ctx.GetTgUsername(chat_id)
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{blocked}{MessageContext.Document.value} {caption}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{addendum}{MessageContext.Document.value} {caption}"
     )
 
 
@@ -51,20 +54,23 @@ async def SendMessage(
     reply_markup: types.ReplyKeyboardMarkup | types.ReplyKeyboardRemove | None = None,
     context: MessageContext = MessageContext.No,
 ) -> None:
-    ctx = await user_ctx
+    addendum = ""
+
+    ctx = await user_ctx()
 
     try:
         await bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
         await ctx.RegisterOutgoingMessage(chat_id, text)
-
-        blocked = ""
     except TelegramForbiddenError:
-        blocked = MessageContext.Blocked.value
+        addendum = MessageContext.Blocked.value
+    except TelegramBadRequest:
+        addendum = MessageContext.BadRequest.value
+        
 
     username = await ctx.GetTgUsername(chat_id)
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{blocked}{context.value} {repr(text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{addendum}{context.value} {repr(text)}"
     )
 
 
@@ -73,7 +79,7 @@ async def ReceiveMessage(
     context: MessageContext = MessageContext.No,
 ) -> None:
     async def CheckNewUser(message: types.Message) -> None:
-        ctx = await user_ctx
+        ctx = await user_ctx()
 
         exists = await ctx.CheckTgUserExists(message.chat.id)
 
@@ -102,7 +108,7 @@ async def ReceiveMessage(
     text = str(message.text)
     chat_id = message.chat.id
 
-    ctx = await user_ctx
+    ctx = await user_ctx()
 
     await ctx.RegisterIncomingMessage(chat_id, text)
 

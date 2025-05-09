@@ -25,7 +25,9 @@ class TgUser(Base):
         Boolean, nullable=False, default=False
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )
@@ -75,7 +77,9 @@ class NesUser(Base):
         JSON, nullable=True
     )
 
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.now(UTC)
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.now(UTC), onupdate=datetime.now(UTC)
     )

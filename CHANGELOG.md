@@ -27,10 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Startup & Shutdown notifications
 - Processing of pending updates
 - Sending documents function
-- added example of .env
+- Example of .env
 
 ### Changed
-- Add timezones to DB models
+- Timezones in DB models
 
 ## [0.1.0] - 2025-05-08 - Vlad
 ### Added

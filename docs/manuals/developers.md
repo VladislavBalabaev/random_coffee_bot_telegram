@@ -4,6 +4,8 @@
 
 See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a better dev experience.
 
+Create `.env` file similar to `.env.example`
+
 ### Via Local Environment
 
 Being in `nespressobot/` directory:
@@ -22,7 +24,15 @@ python -m nespresso
 
 ### Via Docker Container
 
-...
+Being in `nespressobot/` directory:
+
+```bash
+sudo systemctl start docker
+
+sh scripts/run.sh
+
+python -m nespresso
+```
 
 ## 🤝 How to Contribute
 
