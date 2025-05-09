@@ -6,14 +6,18 @@ See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a
 
 ### Via Local Environment
 
+Being in `nespressobot/` directory:
+
 ```bash
 python -m venv venv
 vim venv/bin/activate
-# Then add line: export PYTHONPATH="$VIRTUAL_ENV/src"
+# Then add line at the end of file: export PYTHONPATH="$VIRTUAL_ENV/../src"
 
 source venv/bin/activate
 
 pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
+
+python -m nespresso
 ```
 
 ### Via Docker Container
