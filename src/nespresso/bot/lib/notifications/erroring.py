@@ -6,8 +6,8 @@ from typing import Any, ParamSpec, TypeVar
 from aiogram import types
 
 from nespresso.bot.lib.messaging.stream import SendDocument
+from nespresso.core.configs.constants import ADMIN_CHAT_IDS
 from nespresso.core.configs.paths import PATH_LOGS
-from nespresso.core.constants import ADMIN_CHAT_IDS
 
 P = ParamSpec("P")
 R = TypeVar("R")

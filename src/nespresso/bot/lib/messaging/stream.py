@@ -97,6 +97,8 @@ async def ReceiveMessage(
             context=MessageContext.NoText,
         )
 
+    await CheckNewUser(message)
+
     text = str(message.text)
     chat_id = message.chat.id
 
@@ -110,5 +112,4 @@ async def ReceiveMessage(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In}{context.value} {repr(message.text)}"
     )
 
-    await CheckNewUser(message)
     await CheckText(message)

@@ -10,8 +10,9 @@ class UserContextService(UserService, MessageService):
     """
 
     def __init__(self, user_service: UserService, message_service: MessageService):
-        self.user_service = user_service
-        self.message_service = message_service
+        # Initialize both parent classes explicitly
+        UserService.__init__(self, user_service.user_repo)
+        MessageService.__init__(self, message_service.message_repo)
 
     async def GetRecentMessages(
         self,
