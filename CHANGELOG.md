@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.1.0] - 2025-05-09 - Vlad
 ### Added
+- Startup & Shutdown notification
+- Processing of pending updates
 - Sending documents function
 
 ## [0.1.0] - 2025-05-08 - Vlad
