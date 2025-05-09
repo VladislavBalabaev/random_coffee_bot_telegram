@@ -15,11 +15,34 @@ class MessageContext(Enum):
     Fail = " \033[91m[Fail]\033[0m"
     Pending = " \033[90m[Pending]\033[0m"
     ZeroMessage = " \033[90m[ZeroMessage]\033[0m"
+    Document = " \033[92m[Document]\033[0m"
 
 
 class MessageIO(Enum):
     In = "\033[36m<<\033[0m"
     Out = "\033[35m>>\033[0m"
+
+
+async def SendDocument(
+    chat_id: int,
+    document: types.FSInputFile,
+    caption: str | None = None,
+) -> None:
+    ctx = await user_ctx
+
+    try:
+        await bot.send_document(chat_id=chat_id, document=document, caption=caption)
+
+        await ctx.RegisterOutgoingMessage(chat_id, f"[Document] {caption}")
+
+        blocked = ""
+    except TelegramForbiddenError:
+        blocked = MessageContext.Blocked.value
+
+    username = await ctx.GetTgUsername(chat_id)
+    logging.info(
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out}{blocked}{MessageContext.Document.value} {caption}"
+    )
 
 
 async def SendMessage(
@@ -28,14 +51,10 @@ async def SendMessage(
     reply_markup: types.ReplyKeyboardMarkup | types.ReplyKeyboardRemove | None = None,
     context: MessageContext = MessageContext.No,
 ) -> None:
-    """
-    Sends a message to the user, logs it, and updates the message history in DB.
-    Accounts for blocking by user.
-    """
     ctx = await user_ctx
 
     try:
-        await bot.send_message(chat_id, text, reply_markup=reply_markup)
+        await bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
 
         await ctx.RegisterOutgoingMessage(chat_id, text)
 
@@ -53,10 +72,6 @@ async def ReceiveMessage(
     message: types.Message,
     context: MessageContext = MessageContext.No,
 ) -> None:
-    """
-    Logs the incoming message, and updates the message history in DB.
-    """
-
     async def CheckNewUser(message: types.Message) -> None:
         ctx = await user_ctx
 
