@@ -14,9 +14,9 @@ class MessageContext(Enum):
     BadRequest = " \033[91m[BadRequest]\033[0m"
     UserFailed = " \033[91m[UserFailed]\033[0m"
     Document = " \033[92m[Document]\033[0m"
-    Pending = " \033[90m[Pending]\033[0m"
-    ZeroMessage = " \033[90m[ZeroMessage]\033[0m"
-    NoText = " \033[90m[NoText]\033[0m"
+    Pending = " \033[96m[Pending]\033[0m"
+    ZeroMessage = " \033[96m[ZeroMessage]\033[0m"
+    NoText = " \033[96m[NoText]\033[0m"
 
 
 class MessageIO(Enum):
@@ -92,16 +92,6 @@ async def ReceiveMessage(
             else:
                 await ctx.RegisterTgUser(chat_id=message.chat.id)
 
-    async def CheckText(message: types.Message) -> None:
-        if message.text is not None:
-            return
-
-        await SendMessage(
-            chat_id=message.chat.id,
-            text="Бот определяет только текст",
-            context=MessageContext.NoText,
-        )
-
     await CheckNewUser(message)
 
     text = str(message.text)
@@ -116,5 +106,3 @@ async def ReceiveMessage(
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {repr(message.text)}"
     )
-
-    await CheckText(message)

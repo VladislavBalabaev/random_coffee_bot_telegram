@@ -17,3 +17,5 @@ async def CommandLogs(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
 
     await SendDocument(chat_id=message.chat.id, document=types.FSInputFile(PATH_LOGS))
+
+# USE F.content_type == "text"

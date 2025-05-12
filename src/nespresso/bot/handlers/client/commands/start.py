@@ -18,3 +18,5 @@ async def CommandStart(message: types.Message, state: FSMContext) -> None:
     await SendMessage(
         chat_id=message.chat.id, text="приветики", context=MessageContext.UserFailed
     )
+
+# USE F.content_type == "text"

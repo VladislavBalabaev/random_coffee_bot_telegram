@@ -30,7 +30,7 @@ console_format = ColoredFormatter(
 #     "%(levelname)-8s :: %(name)-25s :: %(asctime)s :: %(message)s :: (%(filename)s:%(lineno)d)"
 # )
 file_format = JsonFormatter(
-    fmt="%(asctime)s %(levelname)s %(name)s %(message)s %(filename)s %(lineno)d",
+    fmt="%(message)s %(asctime)s %(levelname)s %(name)s %(filename)s %(lineno)d",
 )
 
 

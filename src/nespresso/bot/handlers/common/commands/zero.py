@@ -1,5 +1,4 @@
-from aiogram import Router, types
-from aiogram.filters.state import StateFilter
+from aiogram import F, Router, types
 
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
@@ -10,8 +9,8 @@ from nespresso.bot.lib.messaging.stream import (
 router = Router()
 
 
-@router.message(StateFilter(None))  # catching all messages with "zero" condition
-async def ZeroMessage(message: types.Message) -> None:
+@router.message(F.content_type == "text")  # catching all messages with "zero" condition
+async def ZeroMessageText(message: types.Message) -> None:
     """
     Handles messages that don't match any command or state.
     Notifies the user that they are not in any conversation or command sequence.
@@ -21,4 +20,14 @@ async def ZeroMessage(message: types.Message) -> None:
     await SendMessage(
         message.chat.id,
         "Ты не находишься в какой-либо команде\nВыбери из Menu",
+    )
+
+
+@router.message()
+async def ZeroMessageOther(message: types.Message) -> None:
+    await ReceiveMessage(message=message, context=MessageContext.NoText)
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        text="Бот определяет только текст"
     )
