@@ -4,11 +4,9 @@
 
 See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a better dev experience.
 
-Create `.env` file similar to `.env.example`
-
 ### Via Local Environment
 
-Being in `nespressobot/` directory:
+Being in repository directory:
 
 ```bash
 python -m venv venv
@@ -18,34 +16,6 @@ vim venv/bin/activate
 source venv/bin/activate
 
 pip install --no-cache-dir -r requirements.txt -r requirements-dev.txt
-
-python -m nespresso
-```
-
-### Via Docker Container
-
-Being in `nespressobot/` directory:
-
-```bash
-sudo systemctl start docker
-
-docker compose build #--no-cache
-docker compose up --detach
-# OR use `sh scripts/run.sh`
-
-# python -m nespresso
-
-docker stop nespresso_bot
-docker stop nespresso_db
-docker compose down
-```
-
-Note that the bot started in docker _synchronizes_ Postgres DB & logs with local directory via channeling.
-
-Also, you can view logs from docker via:
-
-```bash
-docker compose logs -f bot
 ```
 
 ## Pre-Commit Actions
@@ -68,6 +38,31 @@ mypy src/
 
 ```bash
 pytest
+```
+
+## Launch Bot
+
+Be sure to have `.env` file similar to `.env.example`
+
+Being in repository directory:
+
+```bash
+sudo systemctl start docker
+
+docker compose build #--no-cache
+docker compose up --detach
+
+docker stop nespresso_bot
+docker stop nespresso_db
+docker compose down
+```
+
+Note that the bot started in docker _synchronizes_ Postgres DB & logs with local directory via channeling.
+
+You can view logs from docker via:
+
+```bash
+docker compose logs -f bot
 ```
 
 ## Scripts

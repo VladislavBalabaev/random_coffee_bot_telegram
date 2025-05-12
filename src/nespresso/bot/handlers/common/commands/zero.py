@@ -1,4 +1,5 @@
 from aiogram import F, Router, types
+from aiogram.fsm.context import FSMContext
 
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
@@ -9,25 +10,25 @@ from nespresso.bot.lib.messaging.stream import (
 router = Router()
 
 
-@router.message(F.content_type == "text")  # catching all messages with "zero" condition
+@router.message(F.content_type == "text")
 async def ZeroMessageText(message: types.Message) -> None:
-    """
-    Handles messages that don't match any command or state.
-    Notifies the user that they are not in any conversation or command sequence.
-    """
     await ReceiveMessage(message=message, context=MessageContext.ZeroMessage)
 
     await SendMessage(
         message.chat.id,
-        "Ты не находишься в какой-либо команде\nВыбери из Menu",
+        "You're not in a command right now.\nPick something from the Menu",
     )
 
 
 @router.message()
-async def ZeroMessageOther(message: types.Message) -> None:
+async def NoTextMessage(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message=message, context=MessageContext.NoText)
 
-    await SendMessage(
-        chat_id=message.chat.id,
-        text="Бот определяет только текст"
-    )
+    current_state = await state.get_state()
+
+    if current_state is None:
+        text = "The bot only works with text messages.\nPick something from the Menu"
+    else:
+        text = "The bot only works with text messages\nTry again"
+
+    await SendMessage(chat_id=message.chat.id, text=text)
