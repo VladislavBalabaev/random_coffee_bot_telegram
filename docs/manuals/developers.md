@@ -29,17 +29,16 @@ Being in `nespressobot/` directory:
 ```bash
 sudo systemctl start docker
 
-docker compose stop
-docker compose down
-
 docker compose build #--no-cache
 docker compose up --detach
-# OR use `sh scripts/run.sh` for these 4 commands
+# OR use `sh scripts/run.sh`
 
 # python -m nespresso
-```
 
-#### Notes
+docker stop nespresso_bot
+docker stop nespresso_db
+docker compose down
+```
 
 Note that the bot started in docker _synchronizes_ Postgres DB & logs with local directory via channeling.
 
