@@ -38,3 +38,5 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
     await SendMessage(
         chat_id=message.chat.id, text="lol", context=MessageContext.UserFailed
     )
+
+    await state.clear()

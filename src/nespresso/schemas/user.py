@@ -1,69 +1,91 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class Education(BaseModel):
-    university: str | None  # “Образование до РЭШ 1: университет”
-    department: str | None  # “Департамент”
-    specialty: str | None  # “Специальность”
-    specialization: str | None  # “Специализация”
+    university: str | None = Field(default=None, description="Университет")
+    department: str | None = Field(default=None, description="Департамент")
+    specialty: str | None = Field(default=None, description="Специальность")
+    specialization: str | None = Field(default=None, description="Специализация")
 
 
 class PostEducation(BaseModel):
-    university: str | None  # “Образование после РЭШ 1: университет”
-    location: str | None  # “Местонахождение”
-    department: str | None  # “Департамент”
-    program_type: str | None  # “Тип программы”
-    program: str | None  # “Программа”
-    degree: str | None  # “Полученная степень”
-    period: str | None  # “Период обучения”
-    completed: bool | None  # “Окончено?”
+    university: str | None = Field(default=None, description="Университет")
+    location: str | None = Field(default=None, description="Местонахождение")
+    department: str | None = Field(default=None, description="Департамент")
+    program_type: str | None = Field(default=None, description="Тип программы")
+    program: str | None = Field(default=None, description="Программа")
+    degree: str | None = Field(default=None, description="Полученная степень")
+    period: str | None = Field(default=None, description="Период обучения")
+    completed: bool | None = Field(default=None, description="Окончено?")
 
 
 class WorkExperience(BaseModel):
-    work_industry: str | None  # “Основное место работы: отрасль”
-    work_subindustry: str | None  # “Подотрасль”
-    work_company: str | None  # “Компания”
-    work_location: str | None  # “Местонахождение”
-    work_office: str | None  # “Офис”
-    work_department: str | None  # “Департамент”
-    work_position: str | None  # “Должность”
-    work_tenure: str | None  # “Tenure”
+    work_industry: str | None = Field(default=None, description="Отрасль")
+    work_subindustry: str | None = Field(default=None, description="Подотрасль")
+    work_company: str | None = Field(default=None, description="Компания")
+    work_location: str | None = Field(default=None, description="Местонахождение")
+    work_office: str | None = Field(default=None, description="Офис")
+    work_department: str | None = Field(default=None, description="Департамент")
+    work_position: str | None = Field(default=None, description="Должность")
+    work_tenure: str | None = Field(default=None, description="Tenure")
 
 
 class NesUserInfo(BaseModel):
-    nes_id: int  # “my.nes ID”
-    name: str  # “ФИО”
+    nes_id: int = Field(description="my.nes ID")
 
     # Personal info
-    address: str | None  # “Фактический адрес”
-    city: str | None  # “Город”
-    region: str | None  # “Регион”
-    country: str | None  # “Страна”
+    name: str = Field(description="ФИО")
+    address: str | None = Field(default=None, description="Фактический адрес")
+    city: str | None = Field(default=None, description="Город")
+    region: str | None = Field(default=None, description="Регион")
+    country: str | None = Field(default=None, description="Страна")
 
     # NES alumni info
-    program: str  # “программа”
-    class_name: str | None  # “Класс”
-    diploma_received: bool | None  # “Получен диплом РЭШ”
+    program: str | None = Field(default=None, description="программа")
+    class_name: str | None = Field(default=None, description="Класс")
+    diploma_received: bool | None = Field(
+        default=None, description="Получен диплом РЭШ"
+    )
 
     # Contacts
-    email_primary: EmailStr | None  # “E-mail основной”
-    email_secondary: EmailStr | None  # “E-mail резервный”
-    mobile_phone: str | None  # “Мобильный телефон”
-    work_phone: str | None  # “Рабочий телефон”
-    homepage_social: str | None  # “Домашняя страница, соцсети”
+    email_primary: EmailStr | None = Field(default=None, description="E-mail основной")
+    email_secondary: EmailStr | None = Field(
+        default=None, description="E-mail резервный"
+    )
+    mobile_phone: str | None = Field(default=None, description="Мобильный телефон")
+    work_phone: str | None = Field(default=None, description="Рабочий телефон")
+    homepage_social: str | None = Field(
+        default=None, description="Домашняя страница, соцсети"
+    )
 
     # NES specific
-    research_interests: list[str]  # “Исследовательские интересы”
-    certificates: list[str]  # “Сертификаты”
+    research_interests: list[str] | None = Field(
+        default=None, description="Исследовательские интересы"
+    )
+    certificates: list[str] | None = Field(default=None, description="Сертификаты")
 
-    # Hobbies and expertision
-    hobbies: list[str]  # “Хобби”
-    industry_expertise: list[str]  # “Экспертиза по отраслям”
-    country_expertise: list[str]  # “Экпертиза по странам”
-    professional_expertise: list[str]  # “Профессиональная экспертиза”
+    # Hobbies and expertise
+    hobbies: list[str] | None = Field(default=None, description="Хобби")
+    industry_expertise: list[str] | None = Field(
+        default=None, description="Экспертиза по отраслям"
+    )
+    country_expertise: list[str] | None = Field(
+        default=None, description="Экпертиза по странам"
+    )
+    professional_expertise: list[str] | None = Field(
+        default=None, description="Профессиональная экспертиза"
+    )
 
-    main_work: WorkExperience | None
-    additional_work: list[WorkExperience] = []
+    main_work: WorkExperience | None = Field(
+        default=None, description="Основное место работы"
+    )
+    additional_work: list[WorkExperience] | None = Field(
+        default=None, description="Дополнительные места работы"
+    )
 
-    pre_nes_education: list[Education] = []
-    post_nes_education: list[PostEducation] = []
+    pre_nes_education: list[Education] | None = Field(
+        default=None, description="Образование до РЭШ"
+    )
+    post_nes_education: list[PostEducation] | None = Field(
+        default=None, description="Образование после РЭШ"
+    )
