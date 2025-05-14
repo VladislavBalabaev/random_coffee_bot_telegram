@@ -6,33 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 from nespresso.db.base import Base
 
 
-class TgUser(Base):
-    __tablename__ = "tg_user"
-
-    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-
-    nes_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=True)
-    nes_email: Mapped[str] = mapped_column(String, index=True, nullable=True)
-    username: Mapped[str] = mapped_column(String, index=True, nullable=True)
-
-    full_name: Mapped[str] = mapped_column(String, nullable=True)
-
-    blocked_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    blocked_by_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-
-    active_profile: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    active_matching: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
-
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC), onupdate=datetime.now(UTC)
-    )
-
-
 class NesUser(Base):
     __tablename__ = "nes_user"
 

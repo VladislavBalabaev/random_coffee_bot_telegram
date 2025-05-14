@@ -23,6 +23,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.1.0] - 2025-05-13 - Vlad
 ### Changed
+- Divide user repository into tg & nes
+- Update nes_user pydantic model
+
+## [0.1.0] - 2025-05-13 - Vlad
+### Changed
 - User pydantic scheme
 
 ## [0.1.0] - 2025-05-12 - Vlad

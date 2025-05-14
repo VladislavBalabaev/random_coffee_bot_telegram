@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class Education(BaseModel):
@@ -6,6 +6,8 @@ class Education(BaseModel):
     department: str | None = Field(default=None, description="Департамент")
     specialty: str | None = Field(default=None, description="Специальность")
     specialization: str | None = Field(default=None, description="Специализация")
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PostEducation(BaseModel):
@@ -18,6 +20,8 @@ class PostEducation(BaseModel):
     period: str | None = Field(default=None, description="Период обучения")
     completed: bool | None = Field(default=None, description="Окончено?")
 
+    model_config = ConfigDict(from_attributes=True)
+
 
 class WorkExperience(BaseModel):
     work_industry: str | None = Field(default=None, description="Отрасль")
@@ -29,10 +33,14 @@ class WorkExperience(BaseModel):
     work_position: str | None = Field(default=None, description="Должность")
     work_tenure: str | None = Field(default=None, description="Tenure")
 
+    model_config = ConfigDict(from_attributes=True)
 
-class NesUserInfo(BaseModel):
+
+class NesUserOut(BaseModel):
     nes_id: int = Field(description="my.nes ID")
 
+
+class NesUserIn(NesUserOut):
     # Personal info
     name: str = Field(description="ФИО")
     address: str | None = Field(default=None, description="Фактический адрес")
@@ -89,3 +97,5 @@ class NesUserInfo(BaseModel):
     post_nes_education: list[PostEducation] | None = Field(
         default=None, description="Образование после РЭШ"
     )
+
+    model_config = ConfigDict(from_attributes=True)

@@ -11,7 +11,11 @@ class UserContextService(UserService, MessageService):
 
     def __init__(self, user_service: UserService, message_service: MessageService):
         # Initialize both parent classes explicitly
-        UserService.__init__(self, user_service.user_repo)
+        UserService.__init__(
+            self,
+            tg_user_repo=user_service.tg_user_repo,
+            nes_user_repo=user_service.nes_user_repo,
+        )
         MessageService.__init__(self, message_service.message_repo)
 
     async def GetRecentMessages(
@@ -23,7 +27,7 @@ class UserContextService(UserService, MessageService):
         limit: int = 10,
     ) -> list[Message]:
         if chat_id is None:
-            chat_id = await self.user_repo.GetChatIdBy(
+            chat_id = await self.tg_user_repo.GetChatIdBy(
                 tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
             )
 

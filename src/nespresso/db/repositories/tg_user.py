@@ -2,32 +2,18 @@ import logging
 from typing import Any
 
 from sqlalchemy import select, update
-from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 
-from nespresso.db.base import Base
-from nespresso.db.models.user import NesUser, TgUser
+from nespresso.db.models.tg_user import TgUser
+from nespresso.db.repositories.checking import (
+    CheckColumnBelongsToModel,
+    CheckOnlyOneArgProvided,
+)
 
 
-def CheckColumnBelongsToModel(
-    column: InstrumentedAttribute[Any], model: type[Base]
-) -> None:
-    if column.property.parent.class_ is not model:
-        raise ValueError(
-            "Provided column does not belong to the {model.__name__} model."
-        )
-
-
-def CheckOnlyOneArgProvided(**kwargs: Any) -> None:
-    provided = [key for key, value in kwargs.items() if value is not None]
-
-    if len(provided) != 1:
-        raise ValueError(f"More than one argument is provided: {', '.join(provided)}.")
-
-
-class UserRepository:
+class TgUserRepository:
     def __init__(self, session: async_sessionmaker[AsyncSession]):
         self.session = session
 
@@ -53,29 +39,6 @@ class UserRepository:
                     f"TgUser(chat_id={chat_id}, username={username}, full_name={full_name}) already exists. Creation failed."
                 )
 
-    async def UpsertNesUsers(self, users: NesUser | list[NesUser]) -> None:
-        if isinstance(users, NesUser):
-            users = [users]
-
-        async with self.session() as session:
-            for user in users:
-                user_dict = {
-                    c.name: getattr(user, c.name) for c in NesUser.__table__.columns
-                }
-
-                await session.execute(
-                    insert(NesUser)
-                    .values(user_dict)
-                    .on_conflict_do_update(
-                        index_elements=[NesUser.nes_id],
-                        set_=user_dict,
-                    )
-                )
-
-                logging.info(f"NesUser(nes_id={user.nes_id}) upserted successfully.")
-
-            await session.commit()
-
     # ----- Read -----
 
     async def GetTgUser(self, chat_id: int) -> TgUser | None:
@@ -94,26 +57,6 @@ class UserRepository:
         async with self.session() as session:
             result = await session.execute(
                 select(getattr(TgUser, column.key)).where(TgUser.chat_id == chat_id)
-            )
-
-            return result.scalar_one_or_none()
-
-    async def GetNesUser(self, nes_id: int) -> NesUser | None:
-        async with self.session() as session:
-            result = await session.execute(
-                select(NesUser).where(NesUser.nes_id == nes_id)
-            )
-
-            return result.scalar_one_or_none()
-
-    async def GetNesUserColumn(
-        self, nes_id: int, column: InstrumentedAttribute[Any]
-    ) -> Any | None:
-        CheckColumnBelongsToModel(column, NesUser)
-
-        async with self.session() as session:
-            result = await session.execute(
-                select(getattr(NesUser, column.key)).where(NesUser.nes_id == nes_id)
             )
 
             return result.scalar_one_or_none()

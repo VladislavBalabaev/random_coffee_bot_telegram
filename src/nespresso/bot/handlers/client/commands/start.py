@@ -25,10 +25,7 @@ async def CommandStart(message: types.Message, state: FSMContext) -> None:
     # check if user already confirmed his email
     await state.set_state(StartStates.EmailGet)
 
-    await SendMessage(
-        chat_id=message.chat.id,
-        text="Are you a goofy guy?"
-    )
+    await SendMessage(chat_id=message.chat.id, text="Are you a goofy guy?")
 
 
 @router.message(StateFilter(StartStates.EmailGet), F.content_type == "text")
