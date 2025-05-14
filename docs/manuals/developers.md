@@ -79,6 +79,7 @@ Additionally, you can use `tree` to show ChatGPT project's structure:
 
 ```bash
 tree src/nespresso/
+tree -I '.vscode|__pycache__|*cache|venv|logs|postgres_data|code_combined.txt|try' --prune
 ```
 
 ## How to Contribute

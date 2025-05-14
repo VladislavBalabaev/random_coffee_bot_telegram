@@ -36,5 +36,6 @@ combine-as-imports = true
 split-on-trailing-comma = true
 
 [tool.mypy]
+mypy_path = "src"
 plugins = ["pydantic.mypy"]
 strict = true

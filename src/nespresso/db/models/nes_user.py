@@ -19,7 +19,7 @@ class NesUser(Base):
     country: Mapped[str] = mapped_column(String, nullable=True)
 
     # NES alumni info
-    program: Mapped[str] = mapped_column(String, nullable=False)
+    program: Mapped[str] = mapped_column(String, nullable=True)
     class_name: Mapped[str] = mapped_column(String, nullable=True)
     diploma_received: Mapped[bool] = mapped_column(Boolean, nullable=True)
 
