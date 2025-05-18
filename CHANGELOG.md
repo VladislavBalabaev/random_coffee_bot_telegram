@@ -21,7 +21,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0] - 2025-05-13 - Vlad
+## [0.1.0] - 2025-05-18 - Vlad
+### Added
+- API for receiving NesUser data
+
+## [0.1.0] - 2025-05-14 - Vlad
+### Added
+- Tests for NesUser pydantic to sqlalchemy conversion
+
 ### Changed
 - Divide user repository into tg & nes
 - Update nes_user pydantic model

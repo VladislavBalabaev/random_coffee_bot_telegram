@@ -25,9 +25,8 @@ class UserService:
         )
 
     # - Nes -
-    async def UpsertNesUser(
-        self,
-    ) -> None: ...
+    async def UpsertNesUser(self, user: NesUser) -> None:
+        await self.nes_user_repo.UpsertNesUsers(users=user)
 
     # ----- Read -----
     async def CheckTgUserExists(self, chat_id: int) -> bool:

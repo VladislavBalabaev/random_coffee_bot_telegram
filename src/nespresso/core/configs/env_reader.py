@@ -6,6 +6,7 @@ from nespresso.core.configs.paths import PATH_ENV
 
 class Settings(BaseSettings):
     TELEGRAM_BOT_TOKEN: SecretStr
+
     EMAIL_ADDRESS: SecretStr
     EMAIL_PASSWORD: SecretStr
 
@@ -15,6 +16,8 @@ class Settings(BaseSettings):
     POSTGRES_HOST: SecretStr
     POSTGRES_PORT: SecretStr
     POSTGRES_DSN: SecretStr  # Data Source Name, e.g. postgresql+asyncpg://user:pass@localhost/dbname
+
+    MYNES_TOKEN: SecretStr
 
     model_config = SettingsConfigDict(env_file=PATH_ENV, env_file_encoding="utf-8")
 
