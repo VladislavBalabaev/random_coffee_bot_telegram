@@ -1,4 +1,5 @@
 import asyncio
+import threading
 
 from nespresso.bot.creator import bot, dp
 from nespresso.bot.handlers.admin.register import RegisterAdminHandlers
@@ -8,13 +9,11 @@ from nespresso.bot.handlers.common.register import (
     RegisterHandlerZeroMessage,
 )
 from nespresso.bot.lib.notifications import admin
-from nespresso.bot.lib.notifications.erroring import error_handling
+from nespresso.bot.lib.notifications.erroring import SetExceptionHandlers
 from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
 from nespresso.core import logs
 from nespresso.core.configs.paths import EnsurePaths
 from nespresso.db.session import InitDB
-
-# from handlers.client.menu import set_commands
 
 
 async def OnStartup() -> None:
@@ -31,28 +30,23 @@ async def OnShutdown() -> None:
     await logs.LoggerShutdown()
 
 
-@error_handling
 async def main() -> None:
-    """
-    Registers handlers, sets commands, and starts polling for updates.
-    """
-    try:
-        RegisterHandlerCancel(dp)
-        RegisterAdminHandlers(dp)
-        RegisterClientHandlers(dp)
-        RegisterHandlerZeroMessage(dp)
+    SetExceptionHandlers()
 
-        dp.startup.register(OnStartup)
-        dp.shutdown.register(OnShutdown)
+    RegisterHandlerCancel(dp)
+    RegisterAdminHandlers(dp)
+    RegisterClientHandlers(dp)
+    RegisterHandlerZeroMessage(dp)
 
-        # await set_commands(bot)
+    dp.startup.register(OnStartup)
+    dp.shutdown.register(OnShutdown)
 
-        await dp.start_polling(bot, drop_pending_updates=True)
-    finally:
-        pass
+    # await set_commands(bot)
 
+    await dp.start_polling(bot, drop_pending_updates=True)
 
-if __name__ == "__main__":
-    asyncio.run(main())
 
 # $ python -m nespresso
+if __name__ == "__main__":
+
+    asyncio.run(main())
