@@ -30,7 +30,7 @@ console_format = ColoredFormatter(
 #     "%(levelname)-8s :: %(name)-25s :: %(asctime)s :: %(message)s :: (%(filename)s:%(lineno)d)"
 # )
 file_format = JsonFormatter(
-    fmt="%(message)s %(asctime)s %(levelname)s %(name)s %(filename)s %(lineno)d",
+    fmt="%(levelname)s %(asctime)s %(message)s %(name)s %(filename)s %(lineno)d",
 )
 
 
@@ -80,7 +80,7 @@ async def LoggerSetup() -> None:
     console_handler.addFilter(AiogramFilter())
 
     file_handler = RotatingFileHandler(
-        PATH_LOGS, maxBytes=10 * 1024 * 1024, backupCount=12, encoding="utf-8"  # 10 MB
+        PATH_LOGS, maxBytes=128 * 1024 * 1024, backupCount=8 * 3, encoding="utf-8"  # 3 GB
     )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(file_format)

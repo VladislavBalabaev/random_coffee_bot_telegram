@@ -16,6 +16,7 @@ router = Router()
 class StartStates(StatesGroup):
     EmailGet = State()
     EmailConfirm = State()
+    Error = State()
 
 
 @router.message(Command("start"))
@@ -31,6 +32,18 @@ async def CommandStart(message: types.Message, state: FSMContext) -> None:
 @router.message(StateFilter(StartStates.EmailGet), F.content_type == "text")
 async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
+
+    await state.set_state(StartStates.Error)
+
+    await SendMessage(
+        chat_id=message.chat.id, text="lol", context=MessageContext.UserFailed
+    )
+
+@router.message(StateFilter(StartStates.Error), F.content_type == "text")
+async def CommandStartCheckError(message: types.Message, state: FSMContext) -> None:
+    await ReceiveMessage(message)
+
+    raise ValueError("LOOOOOOOOOOOL")
 
     await SendMessage(
         chat_id=message.chat.id, text="lol", context=MessageContext.UserFailed

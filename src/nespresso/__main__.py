@@ -1,5 +1,4 @@
 import asyncio
-import threading
 
 from nespresso.bot.creator import bot, dp
 from nespresso.bot.handlers.admin.register import RegisterAdminHandlers

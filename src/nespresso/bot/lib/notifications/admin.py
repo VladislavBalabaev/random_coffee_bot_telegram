@@ -22,4 +22,4 @@ async def NotifyOnShutdown() -> None:
             caption="# Bot stopped.",
         )
 
-    logging.info("# Logging stopped.")
+    logging.info("# Bot stopped.")

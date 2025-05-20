@@ -27,7 +27,7 @@ async def ProcessPendingUpdates() -> None:
 
         if chat_id not in notified_users:
             await SendMessage(
-                chat_id=chat_id, text="Bot have been inactive.\nPlease, try again!"
+                chat_id=chat_id, text="Bot has been inactive.\nPlease, try again!"
             )
 
             notified_users.add(chat_id)
