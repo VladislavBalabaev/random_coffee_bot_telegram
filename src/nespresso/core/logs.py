@@ -79,8 +79,11 @@ async def LoggerSetup() -> None:
     console_handler.setFormatter(console_format)
     console_handler.addFilter(AiogramFilter())
 
-    file_handler = RotatingFileHandler(
-        PATH_LOGS, maxBytes=128 * 1024 * 1024, backupCount=8 * 3, encoding="utf-8"  # 3 GB
+    file_handler = RotatingFileHandler(  # 3 GB
+        PATH_LOGS,
+        maxBytes=128 * 1024 * 1024,
+        backupCount=8 * 3,
+        encoding="utf-8",
     )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(file_format)

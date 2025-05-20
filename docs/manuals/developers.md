@@ -52,9 +52,7 @@ sudo systemctl start docker
 docker compose build #--no-cache
 docker compose up --detach
 
-docker stop nespresso_bot
-docker stop nespresso_api
-docker stop nespresso_db
+docker compose stop
 docker compose down
 ```
 

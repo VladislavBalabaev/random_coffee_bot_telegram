@@ -39,6 +39,7 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
         chat_id=message.chat.id, text="lol", context=MessageContext.UserFailed
     )
 
+
 @router.message(StateFilter(StartStates.Error), F.content_type == "text")
 async def CommandStartCheckError(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)

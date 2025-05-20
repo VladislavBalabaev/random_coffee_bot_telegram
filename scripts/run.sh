@@ -1,8 +1,4 @@
-# to ensure bot has db connection when stopping:
-docker stop nespresso_bot
-docker stop nespresso_api
-docker stop nespresso_db
-# docker compose stop
+docker compose stop
 docker compose down
 
 docker compose build #--no-cache

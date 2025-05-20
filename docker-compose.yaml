@@ -36,7 +36,6 @@ services:
     stdin_open: true              # Keeps STDIN open
     tty: true                     # Allocates a pseudo-TTY
     command: python -m nespresso
-    # command: bash
 
   api:
     build:
