@@ -16,7 +16,7 @@ async def NotifyAdminsOfError(exc: BaseException) -> None:
         await SendDocument(
             chat_id=admin,
             document=types.FSInputFile(PATH_LOGS),
-            caption=f"🚨 Error: {repr(exc)}.\n\nCheck logs for details.",
+            caption=f"🚨 Error: {exc}.\n\nCheck logs for details.",
         )
 
 

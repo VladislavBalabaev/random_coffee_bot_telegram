@@ -1,12 +1,10 @@
-.mypy_cache
 .vscode
-*__pycache__/
 *cache
+*__pycache__/
+
+data
+try
 *.env
 *venv
-
 notes.md
 code_combined.txt
-try/
-postgres_data
-logs

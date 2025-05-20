@@ -69,7 +69,7 @@ async def SendMessage(
 
     username = await ctx.GetTgUsername(chat_id)
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum}{context.value} {repr(text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum}{context.value} {text}"
     )
 
 
@@ -104,5 +104,5 @@ async def ReceiveMessage(
     username = await ctx.GetTgUsername(chat_id)
 
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {repr(message.text)}"
+        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {message.text}"
     )

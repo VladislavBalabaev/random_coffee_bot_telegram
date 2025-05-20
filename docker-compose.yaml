@@ -19,7 +19,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - ./data/postgres_data:/var/lib/postgresql/data
 
   bot:
     build:
@@ -30,7 +30,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./logs:/usr/src/app/logs
+      - ./data/logs:/usr/src/app/logs
     networks:
       - nespresso_network
     stdin_open: true              # Keeps STDIN open
@@ -46,7 +46,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./logs:/usr/src/app/logs
+      - ./data/logs:/usr/src/app/logs
     ports:
       - "8000:8000"
     networks:

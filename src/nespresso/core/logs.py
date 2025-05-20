@@ -26,11 +26,9 @@ console_format = ColoredFormatter(
 )
 
 
-# file_format = logging.Formatter(
-#     "%(levelname)-8s :: %(name)-25s :: %(asctime)s :: %(message)s :: (%(filename)s:%(lineno)d)"
-# )
 file_format = JsonFormatter(
     fmt="%(levelname)s %(asctime)s %(message)s %(name)s %(filename)s %(lineno)d",
+    json_ensure_ascii=False,
 )
 
 
