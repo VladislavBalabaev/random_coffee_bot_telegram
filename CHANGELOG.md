@@ -21,13 +21,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-05-20 - Vlad
+### Updated
+- Tg messages translated to eng
+- Upsert process of NesUser
+
 ## [0.1.0] - 2025-05-19 - Vlad
 ### Updated
 - Error handling system
-
-## [0.1.0] - 2025-05-18 - Vlad
-### Added
-- API for receiving NesUser data
 
 ## [0.1.0] - 2025-05-14 - Vlad
 ### Added

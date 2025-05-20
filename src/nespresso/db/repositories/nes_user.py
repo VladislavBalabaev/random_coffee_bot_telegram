@@ -24,16 +24,19 @@ class NesUserRepository:
 
         async with self.session() as session:
             for user in users:
-                user_dict = {
+                full = {
                     c.name: getattr(user, c.name) for c in NesUser.__table__.columns
                 }
+                # only keep client-supplied (non-None) fields
+                insert_dict = {k: v for k, v in full.items() if v is not None}
+                update_dict = {k: v for k, v in insert_dict.items() if k != "nes_id"}
 
                 await session.execute(
                     insert(NesUser)
-                    .values(user_dict)
+                    .values(insert_dict)
                     .on_conflict_do_update(
                         index_elements=[NesUser.nes_id],
-                        set_=user_dict,
+                        set_=update_dict,
                     )
                 )
 

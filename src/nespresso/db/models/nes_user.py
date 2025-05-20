@@ -1,6 +1,6 @@
-from datetime import UTC, datetime
+from datetime import datetime
 
-from sqlalchemy import JSON, BigInteger, Boolean, DateTime, String
+from sqlalchemy import JSON, BigInteger, Boolean, DateTime, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from nespresso.db.base import Base
@@ -51,8 +51,13 @@ class NesUser(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC)
+        DateTime(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        nullable=False,
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(UTC), onupdate=datetime.now(UTC)
+        DateTime(timezone=True),
+        server_default=text("CURRENT_TIMESTAMP"),
+        onupdate=text("CURRENT_TIMESTAMP"),
+        nullable=False,
     )
