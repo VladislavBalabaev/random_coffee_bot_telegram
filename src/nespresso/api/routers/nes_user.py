@@ -1,9 +1,8 @@
 import logging
-from enum import Enum
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import APIKeyHeader
 
 from nespresso.core.configs.env_reader import settings
 from nespresso.core.services import user_ctx
@@ -15,21 +14,17 @@ router = APIRouter()
 _MYNES_TOKEN = settings.MYNES_TOKEN.get_secret_value()
 
 
-class Tags(Enum):
-    users = "users"
-    analytics = "analytics"
-
-
 TokenException = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
-    detail="Could not validate credentials",
-    headers={"WWW-Authenticate": "Bearer"},
+    detail="Could not validate credentials, check the token in the `authorization_token` header",
+    # headers={"WWW-Authenticate": "Bearer"},
 )
 
-oauth2 = OAuth2PasswordBearer(tokenUrl="token")
+# oauth2 = OAuth2PasswordBearer(tokenUrl="token")
+api_key_header = APIKeyHeader(name="authorization_token", auto_error=False)
 
 
-def VerifyMyNesToken(token: Annotated[str, Depends(oauth2)]) -> None:
+def VerifyMyNesToken(token: Annotated[str, Depends(api_key_header)]) -> None:
     if token != _MYNES_TOKEN:
         logging.warning(f"Invalid token verification attempt:\ntoken='{token}'")
         raise TokenException
@@ -41,11 +36,10 @@ def NesUserPydanticToSQLAlchemy(instance: NesUserIn) -> NesUser:
 
 
 @router.post(
-    "/user/data/",
+    "/upsert_nes_info/",
     status_code=status.HTTP_201_CREATED,
-    tags=[Tags.users],
     summary="Create or update NES user",
-    description="To upsert information about NES user pass body with it's full info even with NULLs.",
+    description="To upsert information about NES user pass body with it's full info even with NULLs.\n\n**Authentication**: You must provide the token in the `authorization_token` header.\n",
     response_description="`nes_id` of NES user upserted.",
 )
 async def UpsertNesUser(

@@ -53,6 +53,7 @@ docker compose build #--no-cache
 docker compose up --detach
 
 docker stop nespresso_bot
+docker stop nespresso_api
 docker stop nespresso_db
 docker compose down
 ```
@@ -63,6 +64,8 @@ You can view logs from docker via:
 
 ```bash
 docker compose logs -f bot
+docker compose logs -f api
+docker compose logs -f db
 ```
 
 ## Scripts

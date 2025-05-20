@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ---
 
 ## [0.1.0] - 2025-05-20 - Vlad
+### Added
+- API for receiving NesUser data
+
 ### Updated
 - Tg messages translated to eng
 - Upsert process of NesUser
