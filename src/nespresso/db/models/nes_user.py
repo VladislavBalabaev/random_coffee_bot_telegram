@@ -12,7 +12,7 @@ class NesUser(Base):
     nes_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
 
     # Personal info
-    name: Mapped[str] = mapped_column(String, nullable=False)
+    name: Mapped[str] = mapped_column(String, nullable=True)
     address: Mapped[str] = mapped_column(String, nullable=True)
     city: Mapped[str] = mapped_column(String, nullable=True)
     region: Mapped[str] = mapped_column(String, nullable=True)

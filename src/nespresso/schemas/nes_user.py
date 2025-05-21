@@ -42,7 +42,7 @@ class NesUserOut(BaseModel):
 
 class NesUserIn(NesUserOut):
     # Personal info
-    name: str = Field(description="ФИО")
+    name: str | None = Field(default=None, description="ФИО")
     address: str | None = Field(default=None, description="Фактический адрес")
     city: str | None = Field(default=None, description="Город")
     region: str | None = Field(default=None, description="Регион")
