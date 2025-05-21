@@ -8,27 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from nespresso.api.routers import nes_user
-from nespresso.core.logs import LoggerShutdown, LoggerStart
-
-
-class Tags(Enum):
-    users = "users"
-    analytics = "analytics"
-
-
-app = FastAPI()
-
-
-@app.exception_handler(RequestValidationError)
-async def RequestValidationErrorHandler(
-    request: Request, exc: RequestValidationError
-) -> JSONResponse:
-    logging.error(f"Validation error on {request.method} {request.url}: {exc.errors()}")
-
-    return JSONResponse(
-        status_code=422,
-        content={"detail": exc.errors()},
-    )
+from nespresso.core.logs.api import LoggerShutdown, LoggerStart
 
 
 @asynccontextmanager
@@ -39,5 +19,25 @@ async def Lifespan(app: FastAPI) -> AsyncGenerator[None]:
 
 
 app = FastAPI(lifespan=Lifespan)
+
+
+@app.exception_handler(RequestValidationError)
+async def RequestValidationErrorHandler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    logging.warning(
+        f"Validation error on {request.method} {request.url}: {exc.errors()}"
+    )
+
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()},
+    )
+
+
+class Tags(Enum):
+    users = "users"
+    analytics = "analytics"
+
 
 app.include_router(nes_user.router, prefix="/user", tags=[Tags.users])
