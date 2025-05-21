@@ -4,7 +4,7 @@ from aiogram import types
 
 from nespresso.bot.lib.messaging.stream import SendDocument, SendMessage
 from nespresso.core.configs.constants import ADMIN_CHAT_IDS
-from nespresso.core.configs.paths import PATH_LOGS
+from nespresso.core.configs.paths import PATH_BOT_LOGS
 
 
 async def NotifyOnStartup() -> None:
@@ -18,7 +18,7 @@ async def NotifyOnShutdown() -> None:
     for admin in ADMIN_CHAT_IDS:
         await SendDocument(
             chat_id=admin,
-            document=types.FSInputFile(PATH_LOGS),
+            document=types.FSInputFile(PATH_BOT_LOGS),
             caption="# Bot stopped.",
         )
 

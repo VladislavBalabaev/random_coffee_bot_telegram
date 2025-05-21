@@ -6,7 +6,10 @@ DIR_DATA = DIR_ROOT / "data"
 DIR_LOGS = DIR_ROOT / "logs"
 
 PATH_ENV = DIR_ROOT / ".env"
-PATH_LOGS = DIR_LOGS / "logs.log"
+
+PATH_BOT_LOGS = DIR_LOGS / "bot.log"
+PATH_AIOGRAM_LOGS = DIR_LOGS / "aiogram.log"
+PATH_API_LOGS = DIR_LOGS / "api.log"
 
 
 def EnsurePaths() -> None:

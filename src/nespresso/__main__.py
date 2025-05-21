@@ -10,8 +10,8 @@ from nespresso.bot.handlers.common.register import (
 from nespresso.bot.lib.notifications import admin
 from nespresso.bot.lib.notifications.erroring import SetExceptionHandlers
 from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
-from nespresso.core import logs
 from nespresso.core.configs.paths import EnsurePaths
+from nespresso.core.logs import bot as logs
 from nespresso.db.session import InitDB
 
 

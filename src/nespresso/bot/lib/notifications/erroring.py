@@ -8,14 +8,14 @@ from aiogram.types.error_event import ErrorEvent
 from nespresso.bot.creator import dp
 from nespresso.bot.lib.messaging.stream import SendDocument
 from nespresso.core.configs.constants import ADMIN_CHAT_IDS
-from nespresso.core.configs.paths import PATH_LOGS
+from nespresso.core.configs.paths import PATH_BOT_LOGS
 
 
 async def NotifyAdminsOfError(exc: BaseException) -> None:
     for admin in ADMIN_CHAT_IDS:
         await SendDocument(
             chat_id=admin,
-            document=types.FSInputFile(PATH_LOGS),
+            document=types.FSInputFile(PATH_BOT_LOGS),
             caption=f"🚨 Error: {exc}.\n\nCheck logs for details.",
         )
 
