@@ -28,6 +28,12 @@ _FILE_FORMAT = JsonFormatter(
 )
 
 
+class EscapeNewlinesFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.msg = record.getMessage().replace("\n", "\\n")
+        return True
+
+
 class AiogramFilter(logging.Filter):
     def __init__(self, level: int = 100):  # 100 - block of any logs
         super().__init__()
@@ -75,6 +81,8 @@ def CreateConsoleHandler(
     handler = StreamHandler()
     handler.setLevel(level)
     handler.setFormatter(_CONSOLE_FORMAT)
+
+    handler.addFilter(EscapeNewlinesFilter())
 
     if filters:
         for filt in filters:
