@@ -19,7 +19,7 @@ class StartStates(StatesGroup):
     Error = State()
 
 
-@router.message(Command("start"))
+@router.message(StateFilter(None), Command("start"))
 async def CommandStart(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
 
@@ -51,3 +51,6 @@ async def CommandStartCheckError(message: types.Message, state: FSMContext) -> N
     )
 
     await state.clear()
+
+
+# USE: F.content_type == "text"

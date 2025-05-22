@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Send notification to user in case of error
 - Clear user's state when error occurs
+- Bot's keyboard creation
+- Admin's command to see messages
 
 ### Updated
 - No "\n" in console logs
