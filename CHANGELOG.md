@@ -30,6 +30,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - No "\n" in console logs
 - Directory paths
 
+### Fixed
+- Timestamp creation in DB models
+
 ## [0.1.0] - 2025-05-21 - Vlad
 ### Updated
 - Separate logging for bot logic, aiogram, API. Bot's console logging includes errors from aiogram

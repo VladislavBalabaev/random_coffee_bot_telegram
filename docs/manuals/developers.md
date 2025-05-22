@@ -58,12 +58,22 @@ docker compose down
 
 Note that the bot started in docker _synchronizes_ Postgres DB & logs with local directory via channeling.
 
+### View logs
+
 You can view logs from docker via:
 
 ```bash
 docker compose logs -f bot
 docker compose logs -f api
 docker compose logs -f db
+```
+
+Or logs in files at `./data/logs` path locally.
+
+### Enter container
+
+```bash
+docker run -it nespresso-bot bash
 ```
 
 ## Scripts
