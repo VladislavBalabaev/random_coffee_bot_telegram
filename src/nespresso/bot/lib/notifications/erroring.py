@@ -6,7 +6,7 @@ from aiogram import types
 from aiogram.types.error_event import ErrorEvent
 
 from nespresso.bot.creator import dp
-from nespresso.bot.lib.messaging.stream import SendDocument
+from nespresso.bot.lib.messaging.stream import SendDocument, SendMessage
 from nespresso.core.configs.constants import ADMIN_CHAT_IDS
 from nespresso.core.configs.paths import PATH_BOT_LOGS
 
@@ -35,6 +35,12 @@ async def AiogramExceptionHandler(event: ErrorEvent) -> bool:
         f"Cause exception while processing update:\n{event.model_dump()}",
         exc_info=event.exception,
     )
+
+    if event.update.message:
+        await SendMessage(
+            event.update.message.chat.id,
+            text="Oops, something went wrong.\nWe've logged the error.\n\nIf the issue isn't resolved soon, feel free to reach out to @vbalab",
+        )
 
     await NotifyAdminsOfError(event.exception)
 

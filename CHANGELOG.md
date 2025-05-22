@@ -21,7 +21,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0] - 2025-05-20 - Vlad
+## [0.1.0] - 2025-05-22 - Vlad
+### Added
+- Send notification to user in case of error
+
+## [0.1.0] - 2025-05-21 - Vlad
 ### Updated
 - Separate logging for bot logic, aiogram, API. Bot's console logging includes errors from aiogram
 
