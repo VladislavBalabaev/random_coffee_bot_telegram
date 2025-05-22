@@ -10,6 +10,7 @@ from nespresso.core.services import user_ctx
 
 class MessageContext(Enum):
     No = ""
+    Error = " \033[91m[Error]\033[0m"
     Blocked = " \033[91m[Blocked]\033[0m"
     BadRequest = " \033[91m[BadRequest]\033[0m"
     UserFailed = " \033[91m[UserFailed]\033[0m"
