@@ -30,7 +30,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./data/logs:/usr/src/app/logs
+      - ./data/logs:/usr/src/app/data/logs
     networks:
       - nespresso_network
     stdin_open: true              # Keeps STDIN open
@@ -46,7 +46,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./data/logs:/usr/src/app/logs
+      - ./data/logs:/usr/src/app/data/logs
     ports:
       - "8000:8000"
     networks:

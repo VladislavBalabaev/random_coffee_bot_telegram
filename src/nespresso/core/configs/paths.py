@@ -3,7 +3,9 @@ from pathlib import Path
 DIR_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 DIR_DATA = DIR_ROOT / "data"
-DIR_LOGS = DIR_ROOT / "logs"
+
+DIR_LOGS = DIR_DATA / "logs"
+DIR_TEMP = DIR_DATA / "temp"
 
 PATH_ENV = DIR_ROOT / ".env"
 
@@ -15,6 +17,7 @@ PATH_API_LOGS = DIR_LOGS / "api.log"
 def EnsurePaths() -> None:
     DIR_DATA.mkdir(parents=True, exist_ok=True)
     DIR_LOGS.mkdir(parents=True, exist_ok=True)
+    DIR_TEMP.mkdir(parents=True, exist_ok=True)
 
     if not PATH_ENV.exists():
         raise FileNotFoundError("`.env` file not found")
