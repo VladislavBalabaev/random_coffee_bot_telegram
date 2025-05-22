@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Clear user's state when error occurs
 
 ### Updated
+- No "\n" in console logs
 - Directory paths
 
 ## [0.1.0] - 2025-05-21 - Vlad
