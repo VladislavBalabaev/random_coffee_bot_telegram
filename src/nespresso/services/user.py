@@ -15,7 +15,7 @@ class UserService:
 
         # ----- Read -----
         # - Tg -
-        self.GetChatIdBy = self.tg_user_repo.GetChatIdBy
+        self.GetTgChatIdBy = self.tg_user_repo.GetChatIdBy
         self.GetTgUser = self.tg_user_repo.GetTgUser
         self.GetTgUserColumn = self.tg_user_repo.GetTgUserColumn
 

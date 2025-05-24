@@ -63,15 +63,18 @@ class TgUserRepository:
 
     async def GetChatIdBy(
         self,
+        chat_id: int | None = None,
         tg_username: str | None = None,
         nes_id: int | None = None,
         nes_email: str | None = None,
     ) -> int | None:
         CheckOnlyOneArgProvided(
-            tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
+            chat_id=chat_id, tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
         )
 
-        if tg_username is not None:
+        if chat_id is not None:
+            condition = TgUser.chat_id == chat_id
+        elif tg_username is not None:
             condition = TgUser.username == tg_username
         elif nes_id is not None:
             condition = TgUser.nes_id == nes_id

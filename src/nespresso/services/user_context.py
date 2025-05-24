@@ -1,4 +1,3 @@
-from nespresso.db.models.message import Message
 from nespresso.services.message import MessageService
 from nespresso.services.user import UserService
 
@@ -18,22 +17,21 @@ class UserContextService(UserService, MessageService):
         )
         MessageService.__init__(self, message_service.message_repo)
 
-    async def GetRecentMessages(
-        self,
-        chat_id: int | None = None,
-        tg_username: str | None = None,
-        nes_id: int | None = None,
-        nes_email: str | None = None,
-        limit: int = 10,
-    ) -> list[Message]:
-        if chat_id is None:
-            chat_id = await self.GetChatIdBy(
-                tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
-            )
+    # async def GetRecentMessages(
+    #     self,
+    #     chat_id: int | None = None,
+    #     tg_username: str | None = None,
+    #     nes_id: int | None = None,
+    #     nes_email: str | None = None,
+    #     limit: int = 10,
+    # ) -> list[Message]:
+    #     chat_id = await self.GetTgChatIdBy(
+    #         chat_id=chat_id, tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
+    #     )
 
-            if chat_id is None:
-                return []
+    #     if chat_id is None:
+    #         return []
 
-        result = await self.message_repo.GetRecentMessages(chat_id, limit)
+    #     result = await self.message_repo.GetRecentMessages(chat_id, limit)
 
-        return result
+    #     return result
