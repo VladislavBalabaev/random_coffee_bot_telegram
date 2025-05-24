@@ -27,7 +27,7 @@ class UserContextService(UserService, MessageService):
         limit: int = 10,
     ) -> list[Message]:
         if chat_id is None:
-            chat_id = await self.tg_user_repo.GetChatIdBy(
+            chat_id = await self.GetChatIdBy(
                 tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
             )
 
