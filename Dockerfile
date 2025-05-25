@@ -9,7 +9,7 @@ RUN apt-get update \
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir --retries=20 --timeout=60 --resume-retries=20 -r requirements.txt
 
 ENV PYTHONPATH=/usr/src/app/src
 

@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Admin's command to send messages to all registered users
 - Admin's command to see admin's commands
+- Embedding model
 
 ### Updated
 - Functionality of TgUser repository

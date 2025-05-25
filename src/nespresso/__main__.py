@@ -14,14 +14,18 @@ from nespresso.bot.menu import SetMenu
 from nespresso.core.configs.paths import EnsurePaths
 from nespresso.core.logs import bot as logs
 from nespresso.db.session import InitDB
+from nespresso.recsys.embedding.model import EnsureEmbeddingModel
 
 
 async def OnStartup() -> None:
-    await InitDB()
-    await SetMenu()
     EnsurePaths()
-
     await logs.LoggerStart()
+
+    EnsureEmbeddingModel()
+
+    await InitDB()
+
+    await SetMenu()
     await admin.NotifyOnStartup()
     await ProcessPendingUpdates()
 
