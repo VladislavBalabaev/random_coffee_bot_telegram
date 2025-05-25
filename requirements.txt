@@ -1,4 +1,5 @@
 aiogram==3.20.0
+aiolimiter==1.2.1
 fastapi[standard]==0.115.12
 SQLAlchemy[asyncio]==2.0.40
 asyncpg==0.30.0

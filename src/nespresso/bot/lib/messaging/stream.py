@@ -1,8 +1,10 @@
+import asyncio
 import logging
 from enum import Enum
 
 from aiogram import types
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
+from aiolimiter import AsyncLimiter
 
 from nespresso.bot.creator import bot
 from nespresso.core.services import user_ctx
@@ -15,6 +17,7 @@ class MessageContext(Enum):
     BadRequest = " \033[91m[BadRequest]\033[0m"
     UserFailed = " \033[91m[UserFailed]\033[0m"
     Document = " \033[92m[Document]\033[0m"
+    ToAllRegistered = " \033[92m[ToAllRegistered]\033[0m"
     Pending = " \033[96m[Pending]\033[0m"
     ZeroMessage = " \033[96m[ZeroMessage]\033[0m"
     NoText = " \033[96m[NoText]\033[0m"
@@ -72,6 +75,26 @@ async def SendMessage(
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum}{context.value} {text}"
     )
+
+
+async def SendMessageToGroup(chat_ids: list[int], text: str) -> None:
+    limiter = AsyncLimiter(max_rate=30, time_period=1)
+
+    async def SendMessageLimited(chat_id: int, text: str) -> None:
+        nonlocal limiter
+
+        async with limiter:
+            await SendMessage(
+                chat_id=chat_id,
+                text=text,
+                context=MessageContext.ToAllRegistered,
+            )
+
+    tasks = []
+    for chat_id in chat_ids:
+        tasks.append(SendMessageLimited(chat_id=chat_id, text=text))
+
+    await asyncio.gather(*tasks)
 
 
 async def ReceiveMessage(
