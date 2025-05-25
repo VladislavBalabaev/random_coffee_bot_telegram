@@ -1,10 +1,11 @@
 import logging
-from typing import Any
+from typing import Any, overload
 
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy.orm.attributes import InstrumentedAttribute
+from sqlalchemy.sql.elements import ColumnElement
 
 from nespresso.db.models.tg_user import TgUser
 from nespresso.db.repositories.checking import (
@@ -20,7 +21,10 @@ class TgUserRepository:
     # ----- Create -----
 
     async def CreateTgUser(
-        self, chat_id: int, username: str | None = None, full_name: str | None = None
+        self,
+        chat_id: int,
+        username: str | None = None,
+        full_name: str | None = None,
     ) -> None:
         async with self.session() as session:
             try:
@@ -41,25 +45,58 @@ class TgUserRepository:
 
     # ----- Read -----
 
-    async def GetTgUser(self, chat_id: int) -> TgUser | None:
+    @overload
+    async def GetTgUsersOnCondition(
+        self,
+        condition: ColumnElement[bool] | InstrumentedAttribute[bool],
+        column: None = None,
+    ) -> list[TgUser] | None: ...
+
+    @overload
+    async def GetTgUsersOnCondition(
+        self,
+        condition: ColumnElement[bool] | InstrumentedAttribute[bool],
+        column: InstrumentedAttribute[Any],
+    ) -> list[Any] | None: ...
+
+    async def GetTgUsersOnCondition(
+        self,
+        condition: ColumnElement[bool] | InstrumentedAttribute[bool],
+        column: InstrumentedAttribute[Any] | None = None,
+    ) -> list[TgUser] | list[Any] | None:
+        selection = TgUser
+        if column is not None:
+            selection = getattr(TgUser, column.key)
+
         async with self.session() as session:
-            result = await session.execute(
-                select(TgUser).where(TgUser.chat_id == chat_id)
-            )
+            result = await session.execute(select(selection).where(condition))
 
-            return result.scalar_one_or_none()
+            return list(result.scalars().all())
 
-    async def GetTgUserColumn(
-        self, chat_id: int, column: InstrumentedAttribute[Any]
-    ) -> Any | None:
-        CheckColumnBelongsToModel(column, TgUser)
+    @overload
+    async def GetTgUser(
+        self,
+        chat_id: int,
+        column: None = None,
+    ) -> TgUser | None: ...
 
-        async with self.session() as session:
-            result = await session.execute(
-                select(getattr(TgUser, column.key)).where(TgUser.chat_id == chat_id)
-            )
+    @overload
+    async def GetTgUser(
+        self,
+        chat_id: int,
+        column: InstrumentedAttribute[Any],
+    ) -> Any | None: ...
 
-            return result.scalar_one_or_none()
+    async def GetTgUser(
+        self,
+        chat_id: int,
+        column: InstrumentedAttribute[Any] | None = None,
+    ) -> TgUser | Any | None:
+        result = await self.GetTgUsersOnCondition(
+            condition=TgUser.chat_id == chat_id,
+            column=column,
+        )
+        return result[0] if result else None
 
     async def GetChatIdBy(
         self,
@@ -69,7 +106,10 @@ class TgUserRepository:
         nes_email: str | None = None,
     ) -> int | None:
         CheckOnlyOneArgProvided(
-            chat_id=chat_id, tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
+            chat_id=chat_id,
+            tg_username=tg_username,
+            nes_id=nes_id,
+            nes_email=nes_email,
         )
 
         if chat_id is not None:
@@ -81,15 +121,19 @@ class TgUserRepository:
         elif nes_email is not None:
             condition = TgUser.nes_email == nes_email
 
-        async with self.session() as session:
-            result = await session.execute(select(TgUser.chat_id).where(condition))
-
-            return result.scalar_one_or_none()
+        result = await self.GetTgUsersOnCondition(
+            condition=condition,
+            column=TgUser.chat_id,
+        )
+        return int(result[0]) if result else None
 
     # ----- Update -----
 
     async def UpdateTgUser(
-        self, chat_id: int, column: InstrumentedAttribute[Any], value: Any
+        self,
+        chat_id: int,
+        column: InstrumentedAttribute[Any],
+        value: Any,
     ) -> None:
         CheckColumnBelongsToModel(column, TgUser)
 
