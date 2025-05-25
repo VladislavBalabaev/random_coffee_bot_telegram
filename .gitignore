@@ -3,7 +3,7 @@
 *__pycache__/
 
 data
-embedding_model
+recsysdata
 
 try
 *.env

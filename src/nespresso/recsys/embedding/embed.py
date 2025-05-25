@@ -1,11 +1,11 @@
 import json
 
-from nespresso.core.configs.paths import PATH_EMBEDDING
+from nespresso.core.configs.paths import PATH_EMBEDDING_DATA
 
 
 def UpsertEmbeddings(nes_id: int, embedding: list[int]) -> None:
     try:
-        with open(PATH_EMBEDDING, "r", encoding="utf-8") as f:  # noqa: UP015
+        with open(PATH_EMBEDDING_DATA, "r", encoding="utf-8") as f:  # noqa: UP015
             data = json.load(f)
     except FileNotFoundError:
         data = []
@@ -20,5 +20,5 @@ def UpsertEmbeddings(nes_id: int, embedding: list[int]) -> None:
     if not found:
         data.append({"nes_id": nes_id, "embedding": embedding})
 
-    with open(PATH_EMBEDDING, "w", encoding="utf-8") as f:
+    with open(PATH_EMBEDDING_DATA, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
