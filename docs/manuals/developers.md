@@ -44,7 +44,13 @@ pytest
 
 Be sure to have `.env` file similar to `.env.example`
 
-Being in repository directory:
+Being in repository directory, give permissions:
+
+```bash
+sudo mkdir -p ./recsysdata/opensearch_data && sudo chown -R 1000:1000 ./recsysdata/opensearch_data
+```
+
+Being in repository directory, launch:
 
 ```bash
 sudo systemctl start docker
@@ -66,6 +72,7 @@ You can view logs from docker via:
 docker compose logs -f bot
 docker compose logs -f api
 docker compose logs -f db
+docker compose logs -f opensearch
 ```
 
 Or logs in files at `./data/logs` path locally.
@@ -93,35 +100,6 @@ tree src/nespresso/
 tree -I '.vscode|__pycache__|*cache|venv|logs|postgres_data|code_combined.txt|try' --prune
 ```
 
-## How to Contribute
-
-We welcome contributions to the project!  
-Here's how to get started — both through GitHub and your terminal.
-
-### GitHub Setup
-
-1. Fork the repository  
-   Visit [the main repo](https://github.com/VladislavBalabaev/random_coffee_bot_telegram) and click **"Fork"** (top-right corner).
-
-2. Clone your fork
-
-   ```bash
-   git clone https://github.com/<your-username>/random_coffee_bot_telegram.git
-   cd random_coffee_bot_telegram
-   ```
-
-3. Add the original repo as `upstream`
-
-   This keeps your fork in sync with the source:
-
-   ```bash
-   git remote add upstream https://github.com/VladislavBalabaev/random_coffee_bot_telegram.git
-   ```
-
-4. Check remotes
-
-   ```bash
-   git remote -v
-   ```
+---
 
 Happy contributing! 💙

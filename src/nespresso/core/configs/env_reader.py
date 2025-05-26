@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     POSTGRES_PORT: SecretStr
     POSTGRES_DSN: SecretStr  # Data Source Name, e.g. postgresql+asyncpg://user:pass@localhost/dbname
 
+    OPENSEARCH_INITIAL_ADMIN_PASSWORD: SecretStr
+
     MYNES_TOKEN: SecretStr
 
     model_config = SettingsConfigDict(env_file=PATH_ENV, env_file_encoding="utf-8")
