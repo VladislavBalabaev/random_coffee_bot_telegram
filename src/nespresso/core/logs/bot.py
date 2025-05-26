@@ -46,3 +46,4 @@ async def LoggerStart() -> None:
 async def LoggerShutdown() -> None:
     logging.info("# Logging stopped.")
     _LOGGING_LISTENER.stop()
+    logging.shutdown()

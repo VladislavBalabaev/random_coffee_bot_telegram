@@ -27,7 +27,9 @@ def AsyncioExceptionHandler(
 ) -> None:
     exc = context.get("exception") or RuntimeError(context.get("message"))
 
-    loop.create_task(NotifyAdminsOfError(exc))
+    if not loop.is_closed():
+        loop.create_task(NotifyAdminsOfError(exc))
+
     loop.default_exception_handler(context)  # default: do own handling
 
 
