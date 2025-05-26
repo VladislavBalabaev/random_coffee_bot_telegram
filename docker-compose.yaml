@@ -12,7 +12,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 6
     networks:
       - nespresso_network
@@ -26,12 +26,12 @@ services:
     container_name: nespresso_opensearch
     restart: always
     environment:
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
       - cluster.name=nespresso-cluster
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx2g"
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx2g"
       - plugins.security.disabled=true
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
     ulimits:
       memlock:
         soft: -1
@@ -39,7 +39,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health || exit 1"]
       interval: 10s
-      timeout: 10s
+      timeout: 5s
       retries: 6
     networks:
       - nespresso_network
@@ -47,7 +47,17 @@ services:
       - "9200:9200"
       - "9600:9600"
     volumes:
-      - ./recsysdata/opensearch_data:/usr/share/opensearch/data
+      - ./data/recsysdata/opensearch_data:/usr/share/opensearch/data
+
+  # opensearch-dashboards:
+  #   image: opensearchproject/opensearch-dashboards:latest
+  #   container_name: opensearch-dashboards
+  #   ports:
+  #     - "5601:5601"
+  #   environment:
+  #     OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+  #   depends_on:
+  #     - opensearch
 
   bot:
     build:
@@ -61,7 +71,7 @@ services:
         condition: service_healthy
     volumes:
       - ./data/logs:/usr/src/app/data/logs
-      - ./recsysdata:/usr/src/app/recsysdata
+      - ./data/recsysdata:/usr/src/app/data/recsysdata
     networks:
       - nespresso_network
     stdin_open: true              # Keeps STDIN open
@@ -80,7 +90,7 @@ services:
         condition: service_healthy
     volumes:
       - ./data/logs:/usr/src/app/data/logs
-      - ./recsysdata:/usr/src/app/recsysdata
+      - ./data/recsysdata:/usr/src/app/data/recsysdata
     ports:
       - "8000:8000"
     networks:

@@ -47,7 +47,7 @@ Be sure to have `.env` file similar to `.env.example`
 Being in repository directory, give permissions:
 
 ```bash
-sudo mkdir -p ./recsysdata/opensearch_data && sudo chown -R 1000:1000 ./recsysdata/opensearch_data
+sudo mkdir -p ./data/recsysdata/opensearch_data && sudo chown -R 1000:1000 ./data/recsysdata/opensearch_data
 ```
 
 Being in repository directory, launch:
@@ -97,7 +97,7 @@ Additionally, you can use `tree` to show ChatGPT project's structure:
 
 ```bash
 tree src/nespresso/
-tree -I '.vscode|__pycache__|*cache|venv|logs|postgres_data|code_combined.txt|try' --prune
+tree -I '.vscode|__pycache__|*cache|venv|data|code_combined.txt|try' --prune
 ```
 
 ---

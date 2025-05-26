@@ -13,45 +13,52 @@ from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
 from nespresso.bot.menu import SetMenu
 from nespresso.core.configs.paths import EnsurePaths
 from nespresso.core.logs import bot as logs
-from nespresso.db.session import InitDB
-from nespresso.recsys.embedding.model import EnsureEmbeddingModel
+from nespresso.db.session import EnsureDB
+from nespresso.recsys.search.client import (
+    EnsureOpenSearchIndex,
+    client as opensearch_client,
+)
+
+
+async def EnsureDependencies() -> None:
+    await EnsureDB()
+    # ensure embedding
+    await EnsureOpenSearchIndex()
 
 
 async def OnStartup() -> None:
-    EnsurePaths()
-    await logs.LoggerStart()
-
-    EnsureEmbeddingModel()
-
-    await InitDB()
-
     await SetMenu()
+    RegisterHandlerCancel(dp)
+    RegisterAdminHandlers(dp)
+    RegisterClientHandlers(dp)
+    RegisterHandlerZeroMessage(dp)
+
     await admin.NotifyOnStartup()
     await ProcessPendingUpdates()
 
 
 async def OnShutdown() -> None:
     await admin.NotifyOnShutdown()
+
+    await opensearch_client.close()
+
     await logs.LoggerShutdown()
 
 
 async def main() -> None:
-    SetExceptionHandlers()
+    EnsurePaths()
+    await logs.LoggerStart()
 
-    RegisterHandlerCancel(dp)
-    RegisterAdminHandlers(dp)
-    RegisterClientHandlers(dp)
-    RegisterHandlerZeroMessage(dp)
+    await EnsureDependencies()
 
     dp.startup.register(OnStartup)
     dp.shutdown.register(OnShutdown)
 
-    # await set_commands(bot)
+    SetExceptionHandlers()
 
     await dp.start_polling(bot, drop_pending_updates=True)
 
 
 # $ python -m nespresso
 if __name__ == "__main__":
-
     asyncio.run(main())

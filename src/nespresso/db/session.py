@@ -15,7 +15,7 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def InitDB() -> None:
+async def EnsureDB() -> None:
     """
     Create all SQLAlchemy-mapped tables in the database if they don't already exist.
     """
