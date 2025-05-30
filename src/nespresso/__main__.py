@@ -12,7 +12,8 @@ from nespresso.bot.lib.notifications.erroring import SetExceptionHandlers
 from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
 from nespresso.bot.menu import SetMenu
 from nespresso.core.configs.paths import EnsurePaths
-from nespresso.core.logs import bot as logs
+from nespresso.core.logs import flow as logs
+from nespresso.core.logs.bot import LISTENER, LoggerSetup
 from nespresso.db.session import EnsureDB
 from nespresso.recsys.search.client import (
     EnsureOpenSearchIndex,
@@ -22,7 +23,6 @@ from nespresso.recsys.search.client import (
 
 async def EnsureDependencies() -> None:
     await EnsureDB()
-    # ensure embedding
     await EnsureOpenSearchIndex()
 
 
@@ -42,12 +42,12 @@ async def OnShutdown() -> None:
 
     await opensearch_client.close()
 
-    await logs.LoggerShutdown()
+    await logs.LoggerShutdown(LISTENER)
 
 
 async def main() -> None:
     EnsurePaths()
-    await logs.LoggerStart()
+    await logs.LoggerStart(LoggerSetup, LISTENER)
 
     await EnsureDependencies()
 

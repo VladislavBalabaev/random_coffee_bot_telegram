@@ -8,11 +8,11 @@ from nespresso.core.logs.settings import (
     CreateListener,
 )
 
-_LOGGING_LISTENER: QueueListener
+LISTENER: QueueListener
 
 
 async def LoggerSetup() -> None:
-    global _LOGGING_LISTENER  # noqa: PLW0603
+    global LISTENER  # noqa: PLW0603
 
     # ─── SQLAlchemy settings ───
     sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
@@ -22,17 +22,4 @@ async def LoggerSetup() -> None:
     bot_file_handler = CreateFileHandler(PATH_API_LOGS, logging.INFO)
 
     # ─── Queue ───
-    _LOGGING_LISTENER = CreateListener(console_handler, bot_file_handler)
-
-
-async def LoggerStart() -> None:
-    await LoggerSetup()
-
-    _LOGGING_LISTENER.start()
-    logging.info("# Logging started.")
-
-
-async def LoggerShutdown() -> None:
-    logging.info("# Logging stopped.")
-    _LOGGING_LISTENER.stop()
-    logging.shutdown()
+    LISTENER = CreateListener(console_handler, bot_file_handler)
