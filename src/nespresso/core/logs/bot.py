@@ -1,12 +1,12 @@
 import logging
 from logging.handlers import QueueListener
 
-from nespresso.core.configs.paths import PATH_AIOGRAM_LOGS, PATH_BOT_LOGS
+from nespresso.core.configs.paths import PATH_BOT_LOGS
 from nespresso.core.logs.settings import (
-    AiogramFilter,
     CreateConsoleHandler,
     CreateFileHandler,
     CreateListener,
+    FilterOutLogs,
 )
 
 LISTENER: QueueListener
@@ -15,22 +15,23 @@ LISTENER: QueueListener
 async def LoggerSetup() -> None:
     global LISTENER  # noqa: PLW0603
 
-    # ─── SQLAlchemy settings ───
-    sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
-    sqlalchemy_logger.setLevel(logging.WARNING)
-
-    # ─── Aiogram File Handler ───
-    aiogram_logger = logging.getLogger("aiogram")
-    aiogram_logger.setLevel(logging.INFO)
-    aiogram_file_handler = CreateFileHandler(PATH_AIOGRAM_LOGS, logging.INFO)
-    aiogram_logger.addHandler(aiogram_file_handler)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("aiogram").setLevel(logging.INFO)
+    logging.getLogger("opensearch").setLevel(logging.INFO)
 
     # ─── Bot Handlers ───
     console_handler = CreateConsoleHandler(
-        logging.INFO, filters=[AiogramFilter(logging.WARNING)]
+        logging.INFO,
+        filters=[
+            FilterOutLogs("sqlalchemy.engine", logging.WARNING),
+            FilterOutLogs("aiogram", logging.WARNING),
+            FilterOutLogs("opensearch", logging.WARNING),
+        ],
     )
     bot_file_handler = CreateFileHandler(
-        PATH_BOT_LOGS, logging.DEBUG, filters=[AiogramFilter()]
+        PATH_BOT_LOGS,
+        logging.DEBUG,
     )
 
+    # ─── Queue ───
     LISTENER = CreateListener(console_handler, bot_file_handler)

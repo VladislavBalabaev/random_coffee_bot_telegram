@@ -8,14 +8,15 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from nespresso.api.routers import nes_user
-from nespresso.core.logs.api import LoggerShutdown, LoggerStart
+from nespresso.core.logs import flow as logs
+from nespresso.core.logs.bot import LISTENER, LoggerSetup
 
 
 @asynccontextmanager
 async def Lifespan(app: FastAPI) -> AsyncGenerator[None]:
-    await LoggerStart()
+    await logs.LoggerStart(LoggerSetup, LISTENER)
     yield
-    await LoggerShutdown()
+    await logs.LoggerShutdown(LISTENER)
 
 
 app = FastAPI(lifespan=Lifespan)

@@ -3,10 +3,8 @@
 *__pycache__/
 
 data
-recsysdata
-
 try
-*.env
-*venv
+.env
+venv
 notes.md
 code_combined.txt

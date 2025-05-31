@@ -28,14 +28,17 @@ _FILE_FORMAT = JsonFormatter(
 )
 
 
-class AiogramFilter(logging.Filter):
-    def __init__(self, level: int = 100):  # 100 - block of any logs
+class FilterOutLogs(logging.Filter):
+    def __init__(self, startswith: str, level: int = 100):  # 100 - block of any logs
         super().__init__()
 
+        self.startswith = startswith
         self.level = level
 
     def filter(self, record: logging.LogRecord) -> bool:
-        return not (record.levelno < self.level and record.name.startswith("aiogram"))
+        return not (
+            record.levelno < self.level and record.name.startswith(self.startswith)
+        )
 
 
 class RemoveColorCodesFilter(logging.Filter):

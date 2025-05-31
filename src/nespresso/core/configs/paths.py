@@ -1,20 +1,18 @@
 from pathlib import Path
 
-DIR_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
-DIR_DATA = DIR_ROOT / "data"
-DIR_LOGS = DIR_DATA / "logs"
-DIR_TEMP = DIR_DATA / "temp"
-DIR_RECSYS = DIR_DATA / "recsysdata"
-DIR_EMBEDDING = DIR_RECSYS / "embedding"
-DIR_EMBEDDING_MODEL = DIR_EMBEDDING / "model"
+_DIR_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+_DIR_DATA = _DIR_ROOT / "data"
+_DIR_LOGS = _DIR_DATA / "logs"
+_DIR_RECSYS = _DIR_DATA / "recsys"
 
-_dirs = [DIR_DATA, DIR_LOGS, DIR_TEMP, DIR_RECSYS, DIR_EMBEDDING, DIR_EMBEDDING_MODEL]
+DIR_TEMP = _DIR_DATA / "temp"
+DIR_EMBEDDING = _DIR_RECSYS / "embedding" / "model"
 
-PATH_ENV = DIR_ROOT / ".env"
-PATH_BOT_LOGS = DIR_LOGS / "bot.log"
-PATH_AIOGRAM_LOGS = DIR_LOGS / "aiogram.log"
-PATH_API_LOGS = DIR_LOGS / "api.log"
-PATH_EMBEDDING_DATA = DIR_EMBEDDING / "data.json"
+_dirs = [_DIR_DATA, _DIR_LOGS, DIR_TEMP, _DIR_RECSYS, DIR_EMBEDDING]
+
+PATH_ENV = _DIR_ROOT / ".env"
+PATH_BOT_LOGS = _DIR_LOGS / "bot.log"
+PATH_API_LOGS = _DIR_LOGS / "api.log"
 
 
 def EnsurePaths() -> None:

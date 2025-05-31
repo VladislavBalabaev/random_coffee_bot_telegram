@@ -6,6 +6,7 @@ from nespresso.core.logs.settings import (
     CreateConsoleHandler,
     CreateFileHandler,
     CreateListener,
+    FilterOutLogs,
 )
 
 LISTENER: QueueListener
@@ -14,12 +15,20 @@ LISTENER: QueueListener
 async def LoggerSetup() -> None:
     global LISTENER  # noqa: PLW0603
 
-    # ─── SQLAlchemy settings ───
-    sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
-    sqlalchemy_logger.setLevel(logging.WARNING)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("opensearch").setLevel(logging.INFO)
 
-    console_handler = CreateConsoleHandler(logging.INFO)
-    bot_file_handler = CreateFileHandler(PATH_API_LOGS, logging.INFO)
+    # ─── API Handlers ───
+    console_handler = CreateConsoleHandler(
+        logging.INFO,
+        filters=[
+            FilterOutLogs("opensearch", logging.WARNING),
+        ],
+    )
+    bot_file_handler = CreateFileHandler(
+        PATH_API_LOGS,
+        logging.INFO,
+    )
 
     # ─── Queue ───
     LISTENER = CreateListener(console_handler, bot_file_handler)
