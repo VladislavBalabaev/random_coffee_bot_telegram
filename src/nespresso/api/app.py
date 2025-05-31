@@ -9,14 +9,14 @@ from fastapi.responses import JSONResponse
 
 from nespresso.api.routers import nes_user
 from nespresso.core.logs import flow as logs
-from nespresso.core.logs.bot import LISTENER, LoggerSetup
+from nespresso.core.logs.api import LoggerSetup
 
 
 @asynccontextmanager
 async def Lifespan(app: FastAPI) -> AsyncGenerator[None]:
-    await logs.LoggerStart(LoggerSetup, LISTENER)
+    await logs.LoggerStart(LoggerSetup)
     yield
-    await logs.LoggerShutdown(LISTENER)
+    await logs.LoggerShutdown()
 
 
 app = FastAPI(lifespan=Lifespan)

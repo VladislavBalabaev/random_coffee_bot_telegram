@@ -13,7 +13,7 @@ from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
 from nespresso.bot.menu import SetMenu
 from nespresso.core.configs.paths import EnsurePaths
 from nespresso.core.logs import flow as logs
-from nespresso.core.logs.bot import LISTENER, LoggerSetup
+from nespresso.core.logs.bot import LoggerSetup
 from nespresso.db.session import EnsureDB
 from nespresso.recsys.search.client import (
     EnsureOpenSearchIndex,
@@ -42,12 +42,12 @@ async def OnShutdown() -> None:
 
     await opensearch_client.close()
 
-    await logs.LoggerShutdown(LISTENER)
+    await logs.LoggerShutdown()
 
 
 async def main() -> None:
     EnsurePaths()
-    await logs.LoggerStart(LoggerSetup, LISTENER)
+    await logs.LoggerStart(LoggerSetup)
 
     await EnsureDependencies()
 

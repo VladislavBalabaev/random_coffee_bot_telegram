@@ -11,8 +11,8 @@ DIR_EMBEDDING = _DIR_RECSYS / "embedding" / "model"
 _dirs = [_DIR_DATA, _DIR_LOGS, DIR_TEMP, _DIR_RECSYS, DIR_EMBEDDING]
 
 PATH_ENV = _DIR_ROOT / ".env"
-PATH_BOT_LOGS = _DIR_LOGS / "bot.log"
-PATH_API_LOGS = _DIR_LOGS / "api.log"
+PATH_BOT_LOGS = _DIR_LOGS / "bot" / "bot.log"
+PATH_API_LOGS = _DIR_LOGS / "api" / "api.log"
 
 
 def EnsurePaths() -> None:

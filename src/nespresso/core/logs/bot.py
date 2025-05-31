@@ -9,12 +9,8 @@ from nespresso.core.logs.settings import (
     FilterOutLogs,
 )
 
-LISTENER: QueueListener
 
-
-async def LoggerSetup() -> None:
-    global LISTENER  # noqa: PLW0603
-
+async def LoggerSetup() -> QueueListener:
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
     logging.getLogger("aiogram").setLevel(logging.INFO)
     logging.getLogger("opensearch").setLevel(logging.INFO)
@@ -34,4 +30,6 @@ async def LoggerSetup() -> None:
     )
 
     # ─── Queue ───
-    LISTENER = CreateListener(console_handler, bot_file_handler)
+    listener: QueueListener = CreateListener(console_handler, bot_file_handler)
+
+    return listener

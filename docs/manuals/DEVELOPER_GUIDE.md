@@ -47,7 +47,7 @@ Be sure to have `.env` file similar to `.env.example`
 Being in repository directory, give permissions:
 
 ```bash
-sudo mkdir -p ./data/recsysdata/opensearch_data && sudo chown -R 1000:1000 ./data/recsysdata/opensearch_data
+sudo mkdir -p ./data/recsysdata/opensearch/data && sudo chown -R 1000:1000 ./data/recsysdata/opensearch/data
 ```
 
 Being in repository directory, launch:
@@ -56,7 +56,7 @@ Being in repository directory, launch:
 sudo systemctl start docker
 
 docker compose build #--no-cache
-docker compose up --detach
+docker compose up --detach --remove-orphans
 
 docker compose stop
 docker compose down
@@ -70,9 +70,7 @@ You can view logs from docker via:
 
 ```bash
 docker compose logs -f bot
-docker compose logs -f api
-docker compose logs -f db
-docker compose logs -f opensearch
+docker compose logs -f <bot/api/db/opensearch>
 ```
 
 Or logs in files at `./data/logs` path locally.
@@ -80,7 +78,8 @@ Or logs in files at `./data/logs` path locally.
 ### Enter container
 
 ```bash
-docker run -it nespresso-bot bash
+docker compose run -it bot bash
+docker compose run -it <bot/api/db/opensearch> bash
 ```
 
 ## Scripts

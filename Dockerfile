@@ -9,8 +9,7 @@ RUN apt-get update \
 COPY requirements.txt ./
 
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir --retries=20 --timeout=60 --resume-retries=20 -r requirements.txt \
-    && huggingface-cli download sentence-transformers/all-mpnet-base-v2 --local-dir ./data/embedding/model
+    && pip install --no-cache-dir --retries=20 --timeout=60 --resume-retries=20 -r requirements.txt
 
 ENV PYTHONPATH=/usr/src/app/src
 

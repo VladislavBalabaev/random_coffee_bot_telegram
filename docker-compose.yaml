@@ -19,19 +19,19 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./data/postgres_data:/var/lib/postgresql/data
+      - ./data/postgresql/data:/var/lib/postgresql/data
 
   opensearch:
     image: opensearchproject/opensearch:3.0.0
     container_name: nespresso_opensearch
     restart: always
     environment:
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
       - cluster.name=nespresso-cluster
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx2g"
       - discovery.type=single-node
       - bootstrap.memory_lock=true
       - plugins.security.disabled=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx2g"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
     ulimits:
       memlock:
         soft: -1
@@ -47,7 +47,7 @@ services:
       - "9200:9200"
       - "9600:9600"
     volumes:
-      - ./data/recsysdata/opensearch_data:/usr/share/opensearch/data
+      - ./data/recsys/opensearch/data:/usr/share/opensearch/data
 
   # opensearch-dashboards:
   #   image: opensearchproject/opensearch-dashboards:latest
@@ -70,8 +70,8 @@ services:
       opensearch:
         condition: service_healthy
     volumes:
-      - ./data/logs:/usr/src/app/data/logs
-      - ./data/recsysdata:/usr/src/app/data/recsysdata
+      - ./data/logs/bot:/usr/src/app/data/logs/bot
+      - ./data/recsys:/usr/src/app/data/recsys
     networks:
       - nespresso_network
     stdin_open: true              # Keeps STDIN open
@@ -89,8 +89,8 @@ services:
       opensearch:
         condition: service_healthy
     volumes:
-      - ./data/logs:/usr/src/app/data/logs
-      - ./data/recsysdata:/usr/src/app/data/recsysdata
+      - ./data/logs/api:/usr/src/app/data/logs/api
+      - ./data/recsys:/usr/src/app/data/recsys
     ports:
       - "8000:8000"
     networks:

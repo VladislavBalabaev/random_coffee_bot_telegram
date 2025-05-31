@@ -3,17 +3,14 @@ from collections.abc import Awaitable, Callable
 from logging.handlers import QueueListener
 
 
-async def LoggerStart(
-    setup: Callable[[], Awaitable[None]], listener: QueueListener
-) -> None:
-    await setup()
+async def LoggerStart(setup: Callable[[], Awaitable[QueueListener]]) -> None:
+    listener = await setup()
     listener.start()
 
     logging.info("# Logging started.")
 
 
-async def LoggerShutdown(listener: QueueListener) -> None:
+async def LoggerShutdown() -> None:
     logging.info("# Logging stopped.")
 
-    listener.stop()
     logging.shutdown()
