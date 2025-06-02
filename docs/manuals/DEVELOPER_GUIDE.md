@@ -47,7 +47,7 @@ Be sure to have `.env` file similar to `.env.example`
 Being in repository directory, give permissions:
 
 ```bash
-sudo mkdir -p ./data/recsysdata/opensearch/data && sudo chown -R 1000:1000 ./data/recsysdata/opensearch/data
+sudo mkdir -p ./data/recsys/opensearch/data && sudo chown -R 1000:1000 ./data/recsys/opensearch/data
 ```
 
 Being in repository directory, launch:

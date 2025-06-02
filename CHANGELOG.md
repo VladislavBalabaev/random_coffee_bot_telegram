@@ -21,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-06-02 - Vlad
+### Added
+- OpenSearch functionality
+
 ## [0.1.0] - 2025-05-31 - Vlad
 ### Updated
 - Unify & simplify logging system
