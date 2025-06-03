@@ -7,8 +7,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types.error_event import ErrorEvent
 
-from nespresso.bot.creator import BOT_ID, dp
 from nespresso.bot.lib.messaging.stream import MessageContext, SendDocument, SendMessage
+from nespresso.bot.lifecycle.creator import BOT_ID, dp
 from nespresso.core.configs.constants import ADMIN_CHAT_IDS
 from nespresso.core.configs.paths import PATH_BOT_LOGS
 

@@ -1,6 +1,6 @@
 from aiogram import Bot, Dispatcher
 
-from nespresso.core.configs.env_reader import settings
+from nespresso.core.configs.settings import settings
 
 bot = Bot(token=settings.TELEGRAM_BOT_TOKEN.get_secret_value())
 

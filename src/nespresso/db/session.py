@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from nespresso.core.configs.env_reader import settings
+from nespresso.core.configs.settings import settings
 from nespresso.db.base import Base
 
 engine = create_async_engine(

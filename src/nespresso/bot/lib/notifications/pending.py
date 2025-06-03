@@ -1,9 +1,9 @@
-from nespresso.bot.creator import bot
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
     ReceiveMessage,
     SendMessage,
 )
+from nespresso.bot.lifecycle.creator import bot
 
 
 async def ProcessPendingUpdates() -> None:

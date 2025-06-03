@@ -11,7 +11,7 @@ from nespresso.bot.lib.messaging.stream import (
     SendMessage,
     SendMessageToGroup,
 )
-from nespresso.core.services import user_ctx
+from nespresso.db.services.user_context import user_ctx
 
 router = Router()
 

@@ -1,6 +1,6 @@
 from aiogram.types import BotCommand
 
-from nespresso.bot.creator import bot
+from nespresso.bot.lifecycle.creator import bot
 
 
 async def SetMenu() -> None:

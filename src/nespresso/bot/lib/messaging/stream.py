@@ -6,8 +6,8 @@ from aiogram import types
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 from aiolimiter import AsyncLimiter
 
-from nespresso.bot.creator import bot
-from nespresso.core.services import user_ctx
+from nespresso.bot.lifecycle.creator import bot
+from nespresso.db.services.user_context import user_ctx
 
 
 class MessageContext(Enum):
