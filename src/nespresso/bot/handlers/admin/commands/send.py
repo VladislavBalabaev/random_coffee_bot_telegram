@@ -28,7 +28,7 @@ async def CommandSend(
     if not command.args or len(command.args.split()) != 1:
         await SendMessage(
             chat_id=message.chat.id,
-            text="Iclude tg username:\n/send @vbalab",
+            text="Include tg username:\n/send @vbalab",
             context=MessageContext.UserFailed,
         )
         return
