@@ -15,8 +15,8 @@ from nespresso.core.configs.paths import EnsurePaths
 from nespresso.core.logs import flow as logs
 from nespresso.core.logs.bot import LoggerSetup
 from nespresso.db.session import EnsureDB
-from nespresso.recsys.embedding.model import EnsureEmbeddingModel
-from nespresso.recsys.search.client import (
+from nespresso.recsys.preprocessing.model import EnsureEmbeddingModel
+from nespresso.recsys.search.document import (
     EnsureOpenSearchIndex,
     client as opensearch_client,
 )
