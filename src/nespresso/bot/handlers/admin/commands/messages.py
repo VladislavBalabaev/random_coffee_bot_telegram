@@ -21,7 +21,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
     if not command.args or len(command.args.split()) != 2:  # noqa: PLR2004
         await SendMessage(
             chat_id=message.chat.id,
-            text="Iclude tg username and limit:\n/messages @vbalab 15",
+            text="Include tg username and limit:\n/messages @vbalab 15",
             context=MessageContext.UserFailed,
         )
         return
