@@ -10,7 +10,7 @@ def CheckColumnBelongsToModel(
 ) -> None:
     if column.property.parent.class_ is not model:
         raise ValueError(
-            "Provided column does not belong to the {model.__name__} model."
+            f"Provided column does not belong to the {model.__name__} model."
         )
 
 
