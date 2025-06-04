@@ -21,6 +21,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-06-04 - Vlad
+### Added
+- Email verification of NES
+
+## [0.1.0] - 2025-06-03 - Vlad
+### Updated
+- Restructure project: services into db, change file naming
+
 ## [0.1.0] - 2025-06-02 - Vlad
 ### Added
 - OpenSearch functionality

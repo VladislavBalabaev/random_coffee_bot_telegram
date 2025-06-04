@@ -41,7 +41,7 @@ async def CommandSendaMessage(message: types.Message, state: FSMContext) -> None
         return
 
     ctx = await user_ctx()
-    chat_ids = await ctx.GetRegisteredTgUsersChatId()
+    chat_ids = await ctx.GetVerifiedTgUsersChatId()
 
     await SendMessageToGroup(chat_ids=chat_ids, text=message.text)
 

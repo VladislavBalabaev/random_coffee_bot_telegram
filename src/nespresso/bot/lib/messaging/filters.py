@@ -11,9 +11,12 @@ class AdminFilter(Filter):
         return message.chat.id in ADMIN_CHAT_IDS
 
 
-async def RegisteredFilter(chat_id: int) -> bool:
+async def VerifiedFilter(chat_id: int) -> bool:
     ctx = await user_ctx()
 
-    registered = await ctx.GetTgUser(chat_id=chat_id, column=TgUser.registered)
+    verified = await ctx.GetTgUser(
+        chat_id=chat_id,
+        column=TgUser.verified,
+    )
 
-    return registered if registered else False
+    return verified if verified else False

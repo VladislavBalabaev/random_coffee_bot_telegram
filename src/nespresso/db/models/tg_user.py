@@ -21,7 +21,7 @@ class TgUser(Base):
     blocked_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     blocked_by_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    registered: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     active_matching: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False
     )

@@ -2,7 +2,7 @@
 
 ## Setup
 
-See the [recommended VS Code extensions](recommended_vscode_extensions.md) for a better dev experience.
+See the [recommended VS Code extensions](vscode_extensions.md) for a better dev experience.
 
 ### Via Local Environment
 
@@ -31,7 +31,7 @@ ruff check src/ tests/ --fix
 ### Type Check
 
 ```bash
-mypy src/
+mypy src/ tests/
 ```
 
 ### Run Tests

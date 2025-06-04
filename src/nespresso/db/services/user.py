@@ -53,9 +53,9 @@ class UserService:
 
         return str(result)
 
-    async def GetRegisteredTgUsersChatId(self) -> list[int]:
+    async def GetVerifiedTgUsersChatId(self) -> list[int]:
         result = await self.GetTgUsersOnCondition(
-            condition=TgUser.registered,
+            condition=TgUser.verified,
             column=TgUser.chat_id,
         )
 

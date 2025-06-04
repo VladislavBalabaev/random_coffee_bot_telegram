@@ -13,7 +13,7 @@ router = Router()
 _commands = """/logs - see logs,
 /messages - see messages of a user,
 /send - send message to a user,
-/senda - send messages to all registered users,
+/senda - send messages to all verified users,
 """
 
 

@@ -6,8 +6,8 @@ from fastapi.security import APIKeyHeader
 
 from nespresso.core.configs.settings import settings
 from nespresso.db.models.nes_user import NesUser
+from nespresso.db.schemas.nes_user import NesUserIn, NesUserOut
 from nespresso.db.services.user_context import user_ctx
-from nespresso.schemas.nes_user import NesUserIn, NesUserOut
 
 router = APIRouter()
 
