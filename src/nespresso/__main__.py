@@ -15,16 +15,16 @@ from nespresso.core.configs.paths import EnsurePaths
 from nespresso.core.logs import flow as logs
 from nespresso.core.logs.bot import LoggerSetup
 from nespresso.db.session import EnsureDB
-from nespresso.recsys.preprocessing.model import EnsureEmbeddingModel
-from nespresso.recsys.search.document import (
+from nespresso.recsys.preprocessing.model import EnsureSentenceTransformer
+from nespresso.recsys.searchbase.index import (
+    CloseOpenSearchClient,
     EnsureOpenSearchIndex,
-    client as opensearch_client,
 )
 
 
 async def EnsureDependencies() -> None:
     await EnsureDB()
-    EnsureEmbeddingModel()
+    EnsureSentenceTransformer()
     await EnsureOpenSearchIndex()
 
 
@@ -42,7 +42,7 @@ async def OnStartup() -> None:
 async def OnShutdown() -> None:
     await admin.NotifyOnShutdown()
 
-    await opensearch_client.close()
+    await CloseOpenSearchClient()
 
     await logs.LoggerShutdown()
 

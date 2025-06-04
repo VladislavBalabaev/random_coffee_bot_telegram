@@ -32,8 +32,10 @@ async def UpsertDocAttribute(
 ) -> None:
     body = {
         "doc_as_upsert": True,
-        f"{part.name}_keywords": attribute.keywords,
-        f"{part.name}_embedding": attribute.embedding,
+        "doc": {
+            f"{part.name}_keywords": attribute.keywords,
+            f"{part.name}_embedding": attribute.embedding,
+        },
     }
 
     await client.update(

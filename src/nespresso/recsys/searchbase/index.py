@@ -22,6 +22,10 @@ client = AsyncOpenSearch(
 )
 
 
+async def CloseOpenSearchClient() -> None:
+    await client.close()
+
+
 async def EnsureOpenSearchIndex() -> None:
     if await client.indices.exists(index=INDEX_NAME):
         await client.indices.clear_cache(index=INDEX_NAME, query=True)
