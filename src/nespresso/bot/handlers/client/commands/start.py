@@ -1,19 +1,27 @@
+import logging
+
 from aiogram import F, Router, types
 from aiogram.filters.command import Command
 from aiogram.filters.state import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
+from nespresso.bot.handlers.client.email.verification import CreateCode
+from nespresso.bot.lib.messaging.filters import VerifiedFilter
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
     ReceiveMessage,
     SendMessage,
 )
+from nespresso.db.models.tg_user import TgUser
+from nespresso.db.services.user_context import user_ctx
 
 router = Router()
 
 
 class StartStates(StatesGroup):
+    GetPhoneNumber = State()
     EmailGet = State()
     EmailConfirm = State()
     Error = State()
@@ -23,172 +31,158 @@ class StartStates(StatesGroup):
 async def CommandStart(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
 
-    # check if user already confirmed his email
+    if await VerifiedFilter(chat_id=message.chat.id):
+        await SendMessage(
+            chat_id=message.chat.id,
+            text="You've already registered!",
+        )
+        return
 
-    await SendMessage(chat_id=message.chat.id, text="Are you a goofy guy?")
+    await SendMessage(
+        chat_id=message.chat.id,
+        # TODO: add welcoming text
+        text="Welcoming text.",
+    )
+
+    button = KeyboardButton(text="📱 Share my contact", request_contact=True)
+    keyboard = ReplyKeyboardMarkup(keyboard=[[button]], resize_keyboard=True)
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        text="Please share your contact with us\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
+        reply_markup=keyboard,
+    )
+
+    await state.set_state(StartStates.GetPhoneNumber)
+
+
+@router.message(StateFilter(StartStates.GetPhoneNumber))
+async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) -> None:
+    await ReceiveMessage(message)
+
+    if message.contact is None:
+        await SendMessage(
+            chat_id=message.chat.id,
+            text="❌ Please share your phone number using the button below.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
+            context=MessageContext.UserFailed,
+        )
+        return
+
+    if message.contact.user_id is None or message.from_user is None:
+        await SendMessage(
+            chat_id=message.chat.id,
+            text="❌ Could not retrieve your phone number since you're not a telegram user.\nPlease try again from your user profile",
+            context=MessageContext.UserFailed,
+        )
+        return
+
+    if message.contact.user_id != message.from_user.id:
+        await SendMessage(
+            chat_id=message.chat.id,
+            text="❌ You sent someone else's phone number.\nPlease share your own number.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
+            context=MessageContext.UserFailed,
+        )
+        return
+
+    ctx = await user_ctx()
+    await ctx.UpdateTgUser(
+        chat_id=message.chat.id,
+        column=TgUser.phone_number,
+        value=message.contact.phone_number,
+    )
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        text="✅ Thank you!",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        text="Please enter your NES alumni e-mail to continue",
+    )
+
     await state.set_state(StartStates.EmailGet)
 
 
 @router.message(StateFilter(StartStates.EmailGet), F.content_type == "text")
 async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
+    assert message.text is not None
+
+    email = message.text.replace(" ", "")
+
+    if "@nes.ru" not in email:
+        await SendMessage(
+            chat_id=message.chat.id,
+            text="An email should have '@nes.ru' in it",
+            context=MessageContext.UserFailed,
+        )
+        return
+
+    ctx = await user_ctx()
+    await ctx.UpdateTgUser(
+        chat_id=message.chat.id,
+        column=TgUser.nes_email,
+        value=email,
+    )
 
     await SendMessage(
-        chat_id=message.chat.id, text="lol", context=MessageContext.UserFailed
+        chat_id=message.chat.id,
+        text="Sending a code.\nPlease wait",
     )
-    await state.set_state(StartStates.Error)
+
+    code = CreateCode()
+    logging.info(f"Sending code '{code}' to '{email}'")
+    # await SendCode(email=email, code=code)
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        text="We've sent you a code.\nPlease provide it here",
+    )
+
+    await state.set_data({"code": code})
+    await state.set_state(StartStates.EmailConfirm)
 
 
-@router.message(StateFilter(StartStates.Error), F.content_type == "text")
-async def CommandStartCheckError(message: types.Message, state: FSMContext) -> None:
+@router.message(StateFilter(StartStates.EmailConfirm), F.content_type == "text")
+async def CommandStartEmailConfirm(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
+    assert message.text is not None
 
-    raise ValueError("LOOOOOOOOOOOL")
+    data = await state.get_data()
+    code_actual = str(data["code"])
+    code_provided = message.text.replace(" ", "")
+
+    if code_actual != code_provided:
+        await SendMessage(
+            chat_id=message.chat.id,
+            text="The code is incorrect.\nPlease try again",
+            context=MessageContext.UserFailed,
+        )
+        return
+
+    ctx = await user_ctx()
+    await ctx.UpdateTgUser(
+        chat_id=message.chat.id,
+        column=TgUser.verified,
+        value=True,
+    )
 
     await SendMessage(
-        chat_id=message.chat.id, text="lol", context=MessageContext.UserFailed
+        chat_id=message.chat.id,
+        text="✅ Thank you!",
     )
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        text="You've become a verified user with full access to bot's functionality!",
+    )
+
+    await SendMessage(
+        chat_id=message.chat.id,
+        # TODO: tell more
+        text="Let me tell you more about the bot",
+    )
+
     await state.clear()
-
-
-# USE: F.content_type == "text"
-
-
-# -------------
-
-# from enum import Enum, auto
-
-# from aiogram import F, Router, types
-# from aiogram.filters.command import Command
-# from aiogram.filters.state import StateFilter
-# from aiogram.fsm.context import FSMContext
-# from aiogram.fsm.state import State, StatesGroup
-
-# from nespresso.bot.lib.messaging.file import SendTemporaryFileFromText, ToJSONText
-# from nespresso.bot.lib.messaging.filters import AdminFilter
-# from nespresso.bot.lib.messaging.keyboard import CreateKeyboard
-# from nespresso.bot.lib.messaging.stream import (
-#     MessageContext,
-#     ReceiveMessage,
-#     SendMessage,
-# )
-# from nespresso.core.services import user_ctx
-
-# router = Router()
-
-
-# class MessagesStates(StatesGroup):
-#     Choice = State()
-#     Credentials = State()
-#     Limit = State()
-
-
-# class MessageIdentification(Enum):
-#     chat_id = auto()
-#     tg_username = auto()
-#     nes_id = auto()
-#     nes_email = auto()
-
-#     @classmethod
-#     def HasName(cls, name: str) -> bool:
-#         return name in cls.__members__
-
-
-# @router.message(Command("messages"), StateFilter(None), AdminFilter())
-# async def CommandMessages(message: types.Message, state: FSMContext) -> None:
-#     await ReceiveMessage(message)
-
-#     keyboard = CreateKeyboard(MessageIdentification)
-
-#     await SendMessage(
-#         chat_id=message.chat.id, text="Select ID type", reply_markup=keyboard
-#     )
-#     await state.set_state(MessagesStates.Choice)
-
-
-# @router.message(StateFilter(MessagesStates.Choice), F.content_type == "text")
-# async def CommandMessagesChoice(message: types.Message, state: FSMContext) -> None:
-#     await ReceiveMessage(message)
-
-#     if not message.text or not MessageIdentification.HasName(message.text):
-#         keyboard = CreateKeyboard(MessageIdentification, max_buttons_per_row=4)
-
-#         await SendMessage(
-#             chat_id=message.chat.id,
-#             text="Select ID type from provided",
-#             context=MessageContext.UserFailed,
-#             reply_markup=keyboard,
-#         )
-
-#         return
-
-#     await SendMessage(
-#         chat_id=message.chat.id,
-#         text=f"Provide {message.text} of a user",
-#         reply_markup=types.ReplyKeyboardRemove(),
-#     )
-#     await state.set_data({"identification": message.text})
-#     await state.set_state(MessagesStates.Credentials)
-
-
-# @router.message(StateFilter(MessagesStates.Credentials), F.content_type == "text")
-# async def CommandMessagesCredentials(message: types.Message, state: FSMContext) -> None:
-#     await ReceiveMessage(message)
-
-#     data = await state.get_data()
-#     idtype = data["identification"]
-
-#     if message.text is None:
-#         await SendMessage(
-#             chat_id=message.chat.id,
-#             text=f"Provide {idtype}",
-#             context=MessageContext.UserFailed,
-#         )
-
-#         return
-
-#     ctx = await user_ctx()
-#     chat_id = await ctx.GetTgChatIdBy(chat_id=int(message.text))
-
-#     if chat_id is None:
-#         await SendMessage(
-#             chat_id=message.chat.id,
-#             text="User with such credentials doesn't exist.\nAborting",
-#             context=MessageContext.UserFailed,
-#         )
-
-#         await state.clear()
-#         return
-
-#     await SendMessage(
-#         chat_id=message.chat.id,
-#         text="Set limit on how many recent messages you request, e.g. 50",
-#     )
-#     await state.set_data({"chat_id": chat_id})
-#     await state.set_state(MessagesStates.Limit)
-
-
-# @router.message(StateFilter(MessagesStates.Limit), F.content_type == "text")
-# async def CommandMessagesLimit(message: types.Message, state: FSMContext) -> None:
-#     await ReceiveMessage(message)
-
-#     if not message.text or not message.text.strip(" ").isdigit():
-#         await SendMessage(
-#             chat_id=message.chat.id,
-#             text="Limit should be a number, e.g. 50\nTry again",
-#             context=MessageContext.UserFailed,
-#         )
-
-#         return
-
-#     limit = int(message.text.strip(" "))
-#     data = await state.get_data()
-
-#     ctx = await user_ctx()
-
-#     messages = await ctx.GetRecentMessages(chat_id=data["chat_id"], limit=limit)
-#     messages_dict = [m.IntoDict() for m in messages]
-#     messages_str = ToJSONText(messages_dict)
-
-#     await SendTemporaryFileFromText(chat_id=message.chat.id, text=messages_str)
-#     await state.clear()

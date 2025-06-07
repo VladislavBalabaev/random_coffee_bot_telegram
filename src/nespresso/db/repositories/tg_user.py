@@ -140,20 +140,23 @@ class TgUserRepository:
         async with self.session() as session:
             try:
                 result = await session.execute(
-                    update(column)
+                    update(TgUser)
                     .where(TgUser.chat_id == chat_id)
-                    .values({column: value})
+                    .values({column.key: value})
                 )
 
                 if result.rowcount == 0:
                     raise NoResultFound()
 
                 await session.commit()
-                logging.info(f"TgUser(chat_id={chat_id}) updated: {column}={value}.")
+                logging.info(
+                    f"TgUser(chat_id={chat_id}) updated: '{column}={value}' successfully."
+                )
 
             except NoResultFound:
                 logging.error(
-                    f"Failed to update: {column}={value}. No TgUser(chat_id={chat_id}) found."
+                    f"Failed to update: '{column}={value}'. No TgUser(chat_id={chat_id}) found."
                 )
+                raise
 
     # ----- Delete -----

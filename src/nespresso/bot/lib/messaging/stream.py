@@ -55,7 +55,12 @@ async def SendDocument(
 async def SendMessage(
     chat_id: int,
     text: str,
-    reply_markup: types.ReplyKeyboardMarkup | types.ReplyKeyboardRemove | None = None,
+    reply_markup: (
+        types.ReplyKeyboardMarkup
+        | types.ReplyKeyboardRemove
+        | types.InlineKeyboardMarkup
+        | None
+    ) = None,
     context: MessageContext = MessageContext.No,
 ) -> None:
     addendum = ""
@@ -118,15 +123,13 @@ async def ReceiveMessage(
 
     await CheckNewUser(message)
 
-    text = str(message.text)
     chat_id = message.chat.id
 
     ctx = await user_ctx()
-
-    await ctx.RegisterIncomingMessage(chat_id, text)
-
     username = await ctx.GetTgUsername(chat_id)
 
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {message.text}"
     )
+
+    await ctx.RegisterIncomingMessage(chat_id, str(message.text))
