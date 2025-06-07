@@ -84,7 +84,7 @@ docker compose run -it <bot/api/db/opensearch> bash
 
 ## Scripts
 
-### To work with ChatGPT
+### ChatGPT-related
 
 Simple recursive script to walk through files and concatenate their contents with headers.
 

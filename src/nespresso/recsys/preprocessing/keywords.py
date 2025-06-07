@@ -5,14 +5,21 @@ from nespresso.recsys.preprocessing.model import model
 keyword_model = KeyBERT(model=model)
 
 
-def ExtractKeywords(text: str, top_n: int = 10) -> str:
-    keywords = keyword_model.extract_keywords(
+def ExtractKeywords(text: str) -> str:
+    n_words = len(text.split())
+
+    top_n: int = max(10, int(n_words / 5))
+    nr_candidates = top_n + 5
+
+    result = keyword_model.extract_keywords(
         text,
+        top_n=top_n,
         keyphrase_ngram_range=(1, 3),
         stop_words="english",
         use_maxsum=True,
-        nr_candidates=50,
-        top_n=top_n,
+        nr_candidates=nr_candidates,
     )
 
-    return ", ".join([kw for kw, _ in keywords])
+    keywords = ", ".join([kw for kw, _ in result])
+
+    return keywords
