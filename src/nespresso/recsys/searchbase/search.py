@@ -22,7 +22,7 @@ class SearchItem:
         return cls(
             nes_id=int(hit["_id"]),
             score=float(hit["_score"]),
-            text=str(hit["_source"][f"{DocSide.cv}_{DocAttr.Field.text}"]),
+            text=str(hit["_source"][f"{DocSide.cv.value}_{DocAttr.Field.text.value}"]),
         )
 
 
@@ -67,25 +67,26 @@ class ScrollingSearch:
                     "should": [  # scores are summed
                         {
                             "match": {
-                                f"{DocSide.mynes}_{DocAttr.Field.text}": attr.text,
+                                f"{DocSide.mynes.value}_{DocAttr.Field.text.value}": attr.text,
                             }
                         },
                         {
                             "knn": {
-                                f"{DocSide.mynes}_{DocAttr.Field.embedding}": {
+                                f"{DocSide.mynes.value}_{DocAttr.Field.embedding.value}": {
                                     "vector": attr.embedding,
+                                    # TODO: mb use different `k`?
                                     "k": _LIMIT,
                                 }
                             }
                         },
                         {
                             "match": {
-                                f"{DocSide.cv}_{DocAttr.Field.text}": attr.text,
+                                f"{DocSide.cv.value}_{DocAttr.Field.text.value}": attr.text,
                             }
                         },
                         {
                             "knn": {
-                                f"{DocSide.cv}_{DocAttr.Field.embedding}": {
+                                f"{DocSide.cv.value}_{DocAttr.Field.embedding.value}": {
                                     "vector": attr.embedding,
                                     "k": _LIMIT,
                                 }

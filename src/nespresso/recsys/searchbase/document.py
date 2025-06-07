@@ -14,8 +14,8 @@ async def UpsertTextOpenSearch(
     body = {
         "doc_as_upsert": True,
         "doc": {
-            f"{side}_{DocAttr.Field.text}": attr.text,
-            f"{side}_{DocAttr.Field.embedding}": attr.embedding,
+            f"{side.value}_{DocAttr.Field.text.value}": attr.text,
+            f"{side.value}_{DocAttr.Field.embedding.value}": attr.embedding,
         },
     }
 
@@ -26,4 +26,6 @@ async def UpsertTextOpenSearch(
         refresh=True,  # immediately makes doc visible to search
     )
 
-    logging.info(f"nes_id={nes_id} :: Document '{side}' side upserted successfully.")
+    logging.info(
+        f"nes_id={nes_id} :: Document '{side.value}' side upserted successfully."
+    )

@@ -8,9 +8,18 @@ class MessageRepository:
     def __init__(self, session: async_sessionmaker[AsyncSession]):
         self.session = session
 
-    async def AddMessage(self, chat_id: int, text: str, side: MessageSide) -> None:
+    async def AddMessage(
+        self, message_id: int, chat_id: int, text: str, side: MessageSide
+    ) -> None:
         async with self.session() as session:
-            session.add(Message(chat_id=chat_id, side=side, text=text))
+            session.add(
+                Message(
+                    message_id=message_id,
+                    chat_id=chat_id,
+                    side=side,
+                    text=text,
+                )
+            )
 
             await session.commit()
 

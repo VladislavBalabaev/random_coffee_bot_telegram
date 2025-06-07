@@ -14,6 +14,7 @@ async def LoggerSetup() -> QueueListener:
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
     logging.getLogger("aiogram").setLevel(logging.INFO)
     logging.getLogger("opensearch").setLevel(logging.INFO)
+    logging.getLogger("filelock").setLevel(logging.INFO)
 
     # ─── Bot Handlers ───
     console_handler = CreateConsoleHandler(

@@ -1,3 +1,5 @@
+from aiogram import types
+
 from nespresso.db.models.message import MessageSide
 from nespresso.db.repositories.message import MessageRepository
 
@@ -8,12 +10,18 @@ class MessageService:
 
         self.GetRecentMessages = self.message_repo.GetRecentMessages
 
-    async def RegisterIncomingMessage(self, chat_id: int, text: str) -> None:
+    async def RegisterIncomingMessage(self, message: types.Message) -> None:
         await self.message_repo.AddMessage(
-            chat_id=chat_id, text=text, side=MessageSide.User
+            message_id=message.message_id,
+            chat_id=message.chat.id,
+            text=str(message.text),
+            side=MessageSide.User,
         )
 
-    async def RegisterOutgoingMessage(self, chat_id: int, text: str) -> None:
+    async def RegisterOutgoingMessage(self, message: types.Message) -> None:
         await self.message_repo.AddMessage(
-            chat_id=chat_id, text=text, side=MessageSide.Bot
+            message_id=message.message_id,
+            chat_id=message.chat.id,
+            text=str(message.text),
+            side=MessageSide.Bot,
         )

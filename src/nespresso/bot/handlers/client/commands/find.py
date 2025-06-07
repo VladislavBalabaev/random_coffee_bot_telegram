@@ -13,6 +13,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from nespresso.bot.lib.messaging.filters import VerifiedFilter
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
+    ReceiveCallback,
     ReceiveMessage,
     SendMessage,
 )
@@ -29,7 +30,7 @@ def PrecentageToReduce(text: str) -> int:
     return math.ceil((length - TOKEN_LEN) / length * 10) * 10
 
 
-class FindAction(Enum):
+class FindAction(str, Enum):
     Prev = "previous"
     Next = "next"
 
@@ -68,6 +69,16 @@ class FindStates(StatesGroup):
     Forward = State()
 
 
+# TODO: do actual formatting
+def FormatPage(page: SearchPage) -> str:
+    assert len(page.items) == 1
+
+    text = f"[Page: {page.number}]\n\n"
+    text += f"{page.items[0].text}"
+
+    return text
+
+
 @router.message(StateFilter(None), Command("find"))
 async def CommandFind(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
@@ -104,8 +115,8 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
         text="Doing search.\nPlease, wait",
     )
 
-    scrolling_search = ScrollingSearch()
-    page = await scrolling_search.HybridSearch(message)
+    search = ScrollingSearch()
+    page = await search.HybridSearch(message)
 
     if page is None:
         await SendMessage(
@@ -116,19 +127,19 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
         return
 
     keyboard = FindKeyboard()
-    uid = keyboard.search_id
+    search_id = keyboard.search_id
 
     await SendMessage(
         chat_id=message.chat.id,
-        text=str(page.items),
+        text=FormatPage(page),
         reply_markup=keyboard.Markup(next=True),
     )
 
     await state.set_state(None)
     await state.update_data(
         {
-            f"scrolling_search{uid}": scrolling_search,
-            f"keyboard{uid}": keyboard,
+            f"scrolling_search{search_id}": search,
+            f"keyboard{search_id}": keyboard,
         }
     )
 
@@ -139,6 +150,7 @@ async def CommandFindCallback(
     callback_data: FindCallbackData,
     state: FSMContext,
 ) -> None:
+    await ReceiveCallback(callback_query, callback_data)
     assert isinstance(callback_query.message, types.Message)
 
     search_id = callback_data.search_id
@@ -171,16 +183,13 @@ async def CommandFindCallback(
 
             return
 
-    # TODO: make appropriate text formatting
-    text = str(page.items)
-
     markup = keyboard.Markup(
         prev=search.CanScrollFutherBackward(),
         next=search.CanScrollFutherForward(),
     )
 
     await callback_query.message.edit_text(
-        text=text,
+        text=FormatPage(page),
         reply_markup=markup,
     )
     await callback_query.answer()

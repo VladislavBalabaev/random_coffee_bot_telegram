@@ -36,14 +36,14 @@ async def EnsureOpenSearchIndex() -> None:
         await client.indices.clear_cache(index=INDEX_NAME, query=True)
         return
 
-    text_settings = {"type": "text"}
-    embedding_settings = {"type": "knn_vector", "dimension": EMBEDDING_LEN}
+    text_config = {"type": "text"}
+    embedding_config = {"type": "knn_vector", "dimension": EMBEDDING_LEN}
 
     fields = [
-        (DocSide.mynes, DocAttr.Field.text, text_settings),
-        (DocSide.mynes, DocAttr.Field.embedding, embedding_settings),
-        (DocSide.cv, DocAttr.Field.text, text_settings),
-        (DocSide.cv, DocAttr.Field.embedding, embedding_settings),
+        (DocSide.mynes, DocAttr.Field.text, text_config),
+        (DocSide.mynes, DocAttr.Field.embedding, embedding_config),
+        (DocSide.cv, DocAttr.Field.text, text_config),
+        (DocSide.cv, DocAttr.Field.embedding, embedding_config),
     ]
 
     create_body = {
@@ -51,7 +51,9 @@ async def EnsureOpenSearchIndex() -> None:
             "index.knn": True,
         },
         "mappings": {
-            "properties": {f"{side}_{field}": config for side, field, config in fields}
+            "properties": {
+                f"{side.value}_{field.value}": config for side, field, config in fields
+            }
         },
     }
 

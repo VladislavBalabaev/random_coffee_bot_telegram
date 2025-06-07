@@ -134,6 +134,7 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
 
     code = CreateCode()
     logging.info(f"Sending code '{code}' to '{email}'")
+    # TODO: uncomment
     # await SendCode(email=email, code=code)
 
     await SendMessage(

@@ -13,6 +13,7 @@ from nespresso.core.logs.settings import (
 async def LoggerSetup() -> QueueListener:
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
     logging.getLogger("opensearch").setLevel(logging.INFO)
+    logging.getLogger("filelock").setLevel(logging.INFO)
 
     # ─── API Handlers ───
     console_handler = CreateConsoleHandler(
