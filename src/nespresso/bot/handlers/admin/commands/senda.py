@@ -6,7 +6,6 @@ from aiogram.fsm.state import State, StatesGroup
 
 from nespresso.bot.lib.messaging.filters import AdminFilter
 from nespresso.bot.lib.messaging.stream import (
-    MessageContext,
     ReceiveMessage,
     SendMessage,
     SendMessageToGroup,
@@ -31,14 +30,7 @@ async def CommandSenda(message: types.Message, state: FSMContext) -> None:
 @router.message(StateFilter(SendaStates.Message), F.content_type == "text")
 async def CommandSendaMessage(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
-
-    if message.text is None:
-        await SendMessage(
-            chat_id=message.chat.id,
-            text="Provide text",
-            context=MessageContext.UserFailed,
-        )
-        return
+    assert message.text is not None
 
     ctx = await user_ctx()
     chat_ids = await ctx.GetVerifiedTgUsersChatId()

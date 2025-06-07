@@ -66,3 +66,4 @@ async def EnsureOpenSearchIndex() -> None:
 # TODO: remove this later
 async def DeleteOpenSearchIndex() -> None:
     await client.indices.delete(index=INDEX_NAME)
+    logging.info(f"# OpenSearch '{INDEX_NAME}' index deleted.")

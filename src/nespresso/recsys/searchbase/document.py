@@ -45,6 +45,7 @@ async def UpsertDocAttribute(
         refresh=True,  # immediately makes doc visible to search
     )
 
+    # TODO: do proper logging
     logging.info(
-        f"Document - part '{part.name}' of nes_id='{nes_id}' upserted successfully."
+        f"nes_id={nes_id} :: Document '{part.name}' part upserted successfully."
     )

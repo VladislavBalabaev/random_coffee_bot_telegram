@@ -113,13 +113,19 @@ class ScrollingSearch:
 
         return self._CurrentPage()
 
-    async def ScrollBackward(self) -> SearchPage | None:
+    def CanScrollFutherBackward(self) -> bool:
+        return self.index > 0
+
+    async def ScrollBackward(self) -> SearchPage:
         if self.index == 0:
-            return None
+            raise ValueError("Can't scroll futher backward.")
 
         self.index -= 1
 
         return self._CurrentPage()
+
+    def CanScrollFutherForward(self) -> bool:
+        return self.index < self.pages[-1].number or not self.expired
 
     async def ScrollForward(self) -> SearchPage | None:
         if not self.pages:
@@ -147,6 +153,7 @@ class ScrollingSearch:
         )
 
         if not page.items:
+            self.expired = True
             return None
 
         # TODO: check for score (if it is high enough) and output `None`

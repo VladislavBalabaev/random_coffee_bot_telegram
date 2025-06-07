@@ -53,14 +53,7 @@ async def CommandSend(
 @router.message(StateFilter(SendStates.Message), F.content_type == "text")
 async def CommandSendMessage(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
-
-    if message.text is None:
-        await SendMessage(
-            chat_id=message.chat.id,
-            text="Provide text",
-            context=MessageContext.UserFailed,
-        )
-        return
+    assert message.text is not None
 
     data = await state.get_data()
 
