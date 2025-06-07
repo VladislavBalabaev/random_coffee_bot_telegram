@@ -1,7 +1,7 @@
 import logging
 import re
 from logging import StreamHandler
-from logging.handlers import QueueHandler, QueueListener, RotatingFileHandler
+from logging.handlers import QueueHandler, QueueListener, TimedRotatingFileHandler
 from pathlib import Path
 from queue import Queue
 from typing import Any
@@ -53,12 +53,14 @@ class RemoveColorCodesFilter(logging.Filter):
 
 def CreateFileHandler(
     path: Path, level: int, filters: list[logging.Filter] | None = None
-) -> RotatingFileHandler:
-    handler = RotatingFileHandler(  # 3 GB
-        path,
-        maxBytes=256 * 1024 * 1024,
-        backupCount=12,
+) -> TimedRotatingFileHandler:
+    handler = TimedRotatingFileHandler(
+        filename=path,
+        when="midnight",
+        interval=1,
+        backupCount=365 * 3,
         encoding="utf-8",
+        utc=True,
     )
     handler.setLevel(level)
     handler.setFormatter(_FILE_FORMAT)
