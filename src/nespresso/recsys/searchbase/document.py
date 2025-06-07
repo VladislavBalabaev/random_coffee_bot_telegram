@@ -1,40 +1,21 @@
 import logging
-from dataclasses import dataclass
-from enum import Enum
 
-from nespresso.recsys.preprocessing.embedding import CreateEmbedding
-from nespresso.recsys.preprocessing.keywords import ExtractKeywords
-from nespresso.recsys.searchbase.index import INDEX_NAME, client
+from nespresso.recsys.searchbase.client import client
+from nespresso.recsys.searchbase.index import INDEX_NAME, DocAttr, DocSide
 
 
-class DocPart(Enum):
-    mynes = "mynes"
-    cv = "cv"
-
-
-@dataclass
-class DocAttribute:
-    keywords: str
-    embedding: list[float]
-
-    @classmethod
-    def FromText(cls, text: str) -> "DocAttribute":
-        return DocAttribute(
-            keywords=ExtractKeywords(text),
-            embedding=CreateEmbedding(text),
-        )
-
-
-async def UpsertDocAttribute(
+async def UpsertTextOpenSearch(
     nes_id: int,
-    part: DocPart,
-    attribute: DocAttribute,
+    side: DocSide,
+    text: str,
 ) -> None:
+    attr = DocAttr.FromText(text)
+
     body = {
         "doc_as_upsert": True,
         "doc": {
-            f"{part.name}_keywords": attribute.keywords,
-            f"{part.name}_embedding": attribute.embedding,
+            f"{side}_{DocAttr.Field.text}": attr.text,
+            f"{side}_{DocAttr.Field.embedding}": attr.embedding,
         },
     }
 
@@ -45,7 +26,4 @@ async def UpsertDocAttribute(
         refresh=True,  # immediately makes doc visible to search
     )
 
-    # TODO: do proper logging
-    logging.info(
-        f"nes_id={nes_id} :: Document '{part.name}' part upserted successfully."
-    )
+    logging.info(f"nes_id={nes_id} :: Document '{side}' side upserted successfully.")

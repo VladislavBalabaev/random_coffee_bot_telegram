@@ -16,10 +16,8 @@ from nespresso.core.logs import flow as logs
 from nespresso.core.logs.bot import LoggerSetup
 from nespresso.db.session import EnsureDB
 from nespresso.recsys.preprocessing.model import EnsureSentenceTransformer
-from nespresso.recsys.searchbase.index import (
-    CloseOpenSearchClient,
-    EnsureOpenSearchIndex,
-)
+from nespresso.recsys.searchbase.client import CloseOpenSearchClient
+from nespresso.recsys.searchbase.index import EnsureOpenSearchIndex
 
 
 async def EnsureDependencies() -> None:

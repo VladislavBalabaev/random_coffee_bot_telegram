@@ -8,8 +8,8 @@ keyword_model = KeyBERT(model=model)
 def ExtractKeywords(text: str) -> str:
     n_words = len(text.split())
 
-    top_n: int = max(10, int(n_words / 5))
-    nr_candidates = top_n + 5
+    top_n: int = min(15, max(3, int(n_words / 5)))
+    nr_candidates = top_n + 2
 
     result = keyword_model.extract_keywords(
         text,

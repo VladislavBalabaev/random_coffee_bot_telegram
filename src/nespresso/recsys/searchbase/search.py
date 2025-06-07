@@ -4,23 +4,25 @@ from typing import Any
 
 from aiogram import types
 
-from nespresso.recsys.searchbase.document import DocAttribute
-from nespresso.recsys.searchbase.index import INDEX_NAME, client
+from nespresso.recsys.searchbase.client import client
+from nespresso.recsys.searchbase.index import INDEX_NAME, DocAttr, DocSide
 
 _TIMEOUT = "30m"  # alive for 30 minutes
-_ITEMS = 5
+_LIMIT = 1
 
 
 @dataclass
 class SearchItem:
     nes_id: int
     score: float
+    text: str
 
     @classmethod
     def FromHit(cls, hit: dict[Any, Any]) -> "SearchItem":
         return cls(
             nes_id=int(hit["_id"]),
             score=float(hit["_score"]),
+            text=str(hit["_source"][f"{DocSide.cv}_{DocAttr.Field.text}"]),
         )
 
 
@@ -53,31 +55,39 @@ class ScrollingSearch:
         if not message.text:
             raise ValueError("Expected message.text to be non-empty")
 
-        attr = DocAttribute.FromText(message.text)
+        attr = DocAttr.FromText(message.text)
 
-        logging.info(f"chat_id={message.chat.id} :: Query keywords: '{attr.keywords}'")
+        logging.info(f"chat_id={message.chat.id} :: Query text: '{attr.text}'")
 
         body = {
-            "size": _ITEMS,
-            "_source": False,
+            "size": _LIMIT,
+            "_source": True,
             "query": {
                 "bool": {  # composite query
                     "should": [  # scores are summed
-                        {"match": {"mynes_keywords": attr.keywords}},
+                        {
+                            "match": {
+                                f"{DocSide.mynes}_{DocAttr.Field.text}": attr.text,
+                            }
+                        },
                         {
                             "knn": {
-                                "mynes_embedding": {
+                                f"{DocSide.mynes}_{DocAttr.Field.embedding}": {
                                     "vector": attr.embedding,
-                                    "k": _ITEMS,
+                                    "k": _LIMIT,
                                 }
                             }
                         },
-                        {"match": {"cv_keywords": attr.keywords}},
+                        {
+                            "match": {
+                                f"{DocSide.cv}_{DocAttr.Field.text}": attr.text,
+                            }
+                        },
                         {
                             "knn": {
-                                "cv_embedding": {
+                                f"{DocSide.cv}_{DocAttr.Field.embedding}": {
                                     "vector": attr.embedding,
-                                    "k": _ITEMS,
+                                    "k": _LIMIT,
                                 }
                             }
                         },

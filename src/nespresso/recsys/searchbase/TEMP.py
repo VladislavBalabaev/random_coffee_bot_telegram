@@ -1,10 +1,7 @@
-from nespresso.recsys.searchbase.document import (
-    DocAttribute,
-    DocPart,
-    UpsertDocAttribute,
-)
+from nespresso.recsys.searchbase.document import UpsertTextOpenSearch
 from nespresso.recsys.searchbase.index import (
     DeleteOpenSearchIndex,
+    DocSide,
     EnsureOpenSearchIndex,
 )
 
@@ -48,8 +45,4 @@ async def DoShit() -> None:
     await EnsureOpenSearchIndex()
 
     for nes_id, text in enumerate(user_texts):
-        await UpsertDocAttribute(
-            nes_id=nes_id,
-            part=DocPart.cv,
-            attribute=DocAttribute.FromText(text),
-        )
+        await UpsertTextOpenSearch(nes_id=nes_id, side=DocSide.cv, text=text)

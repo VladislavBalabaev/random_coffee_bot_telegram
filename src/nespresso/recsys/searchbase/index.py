@@ -1,29 +1,34 @@
 import logging
+from dataclasses import dataclass
+from enum import Enum
 
-from opensearchpy import AsyncHttpConnection, AsyncOpenSearch
-
-from nespresso.core.configs.settings import settings
+from nespresso.recsys.preprocessing.embedding import CreateEmbedding
 from nespresso.recsys.preprocessing.model import EMBEDDING_LEN
+from nespresso.recsys.searchbase.client import client
 
 INDEX_NAME = "nes_users"
 
-client = AsyncOpenSearch(
-    hosts=[
-        {
-            "host": "nespresso_opensearch",
-            "port": 9200,
-            "scheme": "http",
-        }
-    ],
-    http_auth=("admin", settings.OPENSEARCH_INITIAL_ADMIN_PASSWORD.get_secret_value()),
-    connection_class=AsyncHttpConnection,
-    use_ssl=False,
-    verify_certs=False,
-)
+
+class DocSide(str, Enum):
+    mynes = "mynes"
+    cv = "cv"
 
 
-async def CloseOpenSearchClient() -> None:
-    await client.close()
+@dataclass
+class DocAttr:
+    text: str
+    embedding: list[float]
+
+    class Field(str, Enum):
+        text = "text"
+        embedding = "embedding"
+
+    @classmethod
+    def FromText(cls, text: str) -> "DocAttr":
+        return cls(
+            text=text,
+            embedding=CreateEmbedding(text),
+        )
 
 
 async def EnsureOpenSearchIndex() -> None:
@@ -31,27 +36,22 @@ async def EnsureOpenSearchIndex() -> None:
         await client.indices.clear_cache(index=INDEX_NAME, query=True)
         return
 
+    text_settings = {"type": "text"}
+    embedding_settings = {"type": "knn_vector", "dimension": EMBEDDING_LEN}
+
+    fields = [
+        (DocSide.mynes, DocAttr.Field.text, text_settings),
+        (DocSide.mynes, DocAttr.Field.embedding, embedding_settings),
+        (DocSide.cv, DocAttr.Field.text, text_settings),
+        (DocSide.cv, DocAttr.Field.embedding, embedding_settings),
+    ]
+
     create_body = {
         "settings": {
             "index.knn": True,
         },
         "mappings": {
-            "properties": {
-                "mynes_keywords": {
-                    "type": "text",
-                },
-                "mynes_embedding": {
-                    "type": "knn_vector",
-                    "dimension": EMBEDDING_LEN,
-                },
-                "cv_keywords": {
-                    "type": "text",
-                },
-                "cv_embedding": {
-                    "type": "knn_vector",
-                    "dimension": EMBEDDING_LEN,
-                },
-            }
+            "properties": {f"{side}_{field}": config for side, field, config in fields}
         },
     }
 
