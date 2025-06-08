@@ -1,16 +1,13 @@
-from collections.abc import Callable
-from typing import ParamSpec, TypeVar
-
-P = ParamSpec("P")
-R = TypeVar("R")
+from nespresso.db.models.tg_user import TgUser
+from nespresso.db.services.user_context import user_ctx
 
 
-def checker(func: Callable[P, R]) -> Callable[P, R]:
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        ...
-        return func(*args, **kwargs)
+async def CheckVerified(chat_id: int) -> bool:
+    ctx = await user_ctx()
 
-    return wrapper
+    verified = await ctx.GetTgUser(
+        chat_id=chat_id,
+        column=TgUser.verified,
+    )
 
-
-# TODO: check_finished_profile
+    return verified if verified else False

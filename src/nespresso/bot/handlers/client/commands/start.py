@@ -8,7 +8,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from nespresso.bot.handlers.client.email.verification import CreateCode
-from nespresso.bot.lib.messaging.filters import VerifiedFilter
+from nespresso.bot.lib.messaging.checks import CheckVerified
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
     ReceiveMessage,
@@ -31,7 +31,7 @@ class StartStates(StatesGroup):
 async def CommandStart(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
 
-    if await VerifiedFilter(chat_id=message.chat.id):
+    if await CheckVerified(chat_id=message.chat.id):
         await SendMessage(
             chat_id=message.chat.id,
             text="You've already registered!",
