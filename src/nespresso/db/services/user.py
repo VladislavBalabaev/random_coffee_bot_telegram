@@ -45,14 +45,6 @@ class UserService:
 
         return result is not None
 
-    async def GetTgUsername(self, chat_id: int) -> str:
-        result = await self.GetTgUser(
-            chat_id=chat_id,
-            column=TgUser.username,
-        )
-
-        return str(result)
-
     async def GetVerifiedTgUsersChatId(self) -> list[int]:
         result = await self.GetTgUsersOnCondition(
             condition=TgUser.verified,

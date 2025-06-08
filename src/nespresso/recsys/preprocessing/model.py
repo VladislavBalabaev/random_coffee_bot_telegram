@@ -6,7 +6,6 @@ from nespresso.core.configs.paths import DIR_EMBEDDING
 TOKEN_LEN = 384
 EMBEDDING_LEN = 768
 
-# TODO: try different embedding model
 _MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
 
 

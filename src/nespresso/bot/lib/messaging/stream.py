@@ -7,6 +7,7 @@ from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 from aiogram.filters.callback_data import CallbackData
 from aiolimiter import AsyncLimiter
 
+from nespresso.bot.lib.chat.username import GetChatTgUsername
 from nespresso.bot.lifecycle.creator import bot
 from nespresso.db.services.user_context import user_ctx
 
@@ -37,8 +38,6 @@ async def SendDocument(
 ) -> types.Message | None:
     addendum = MessageContext.No
 
-    ctx = await user_ctx()
-
     message: types.Message | None = None
     try:
         message = await bot.send_document(
@@ -47,13 +46,16 @@ async def SendDocument(
             caption=caption,
         )
 
+        ctx = await user_ctx()
         await ctx.RegisterOutgoingMessage(message)
+
     except TelegramForbiddenError:
         addendum = MessageContext.Blocked
+
     except TelegramBadRequest:
         addendum = MessageContext.BadRequest
 
-    username = await ctx.GetTgUsername(chat_id)
+    username = await GetChatTgUsername(chat_id)
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum.value}{MessageContext.Document.value} {caption}"
     )
@@ -74,8 +76,6 @@ async def SendMessage(
 ) -> types.Message | None:
     addendum = MessageContext.No
 
-    ctx = await user_ctx()
-
     message: types.Message | None = None
     try:
         message = await bot.send_message(
@@ -84,13 +84,14 @@ async def SendMessage(
             reply_markup=reply_markup,
         )
 
+        ctx = await user_ctx()
         await ctx.RegisterOutgoingMessage(message)
     except TelegramForbiddenError:
         addendum = MessageContext.Blocked
     except TelegramBadRequest:
         addendum = MessageContext.BadRequest
 
-    username = await ctx.GetTgUsername(chat_id)
+    username = await GetChatTgUsername(chat_id)
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum.value}{context.value} {text}"
     )
@@ -141,13 +142,12 @@ async def ReceiveMessage(
 
     chat_id = message.chat.id
 
-    ctx = await user_ctx()
-    username = await ctx.GetTgUsername(chat_id)
-
+    username = await GetChatTgUsername(chat_id)
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {message.text}"
     )
 
+    ctx = await user_ctx()
     await ctx.RegisterIncomingMessage(message)
 
 
@@ -162,9 +162,7 @@ async def ReceiveCallback(
     prefix = f"Callback: {callback_data.__prefix__}"
     dump = f"model_dump={callback_data.model_dump()}"
 
-    ctx = await user_ctx()
-    username = await ctx.GetTgUsername(chat_id)
-
+    username = await GetChatTgUsername(chat_id)
     logging.info(
         f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{MessageContext.Callback.value}{context.value} {prefix}"
     )
