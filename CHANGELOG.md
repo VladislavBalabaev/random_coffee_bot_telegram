@@ -30,6 +30,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- LRU & timeout ScrollingSearch holding
+
+## [0.1.0] - 2025-06-04 - Vlad
+
+### Added
+
 - Client's /start command to register as NES alumni
 - Client's /find command to find alumni by request
 

@@ -10,10 +10,10 @@ from nespresso.bot.lib.messaging.stream import (
 
 router = Router()
 
-_commands = """/logs - see logs,
-/messages - see messages of a user,
-/send - send message to a user,
-/senda - send messages to all verified users,
+_commands = """/logs\nsee logs\n\n
+/messages\nsee messages of a user\n\n
+/send\nsend message to a user\n\n
+/senda\nsend messages to all verified users
 """
 
 

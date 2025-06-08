@@ -1,14 +1,17 @@
 import logging
+import uuid
 from dataclasses import dataclass
 from typing import Any
 
 from aiogram import types
+from cachetools import TTLCache
 
 from nespresso.recsys.searchbase.client import client
 from nespresso.recsys.searchbase.index import INDEX_NAME, DocAttr, DocSide
 
-_TIMEOUT = "30m"  # alive for 30 minutes
-_LIMIT = 1
+_TIMEOUT = 60  # alive for 1 hour
+_SCROLL_LIMIT = 1
+_KNN_LIMIT = 30
 
 
 @dataclass
@@ -60,7 +63,7 @@ class ScrollingSearch:
         logging.info(f"chat_id={message.chat.id} :: Query text: '{attr.text}'")
 
         body = {
-            "size": _LIMIT,
+            "size": _SCROLL_LIMIT,
             "_source": True,
             "query": {
                 "bool": {  # composite query
@@ -74,8 +77,7 @@ class ScrollingSearch:
                             "knn": {
                                 f"{DocSide.mynes.value}_{DocAttr.Field.embedding.value}": {
                                     "vector": attr.embedding,
-                                    # TODO: mb use different `k`?
-                                    "k": _LIMIT,
+                                    "k": _KNN_LIMIT,
                                 }
                             }
                         },
@@ -88,7 +90,7 @@ class ScrollingSearch:
                             "knn": {
                                 f"{DocSide.cv.value}_{DocAttr.Field.embedding.value}": {
                                     "vector": attr.embedding,
-                                    "k": _LIMIT,
+                                    "k": _KNN_LIMIT,
                                 }
                             }
                         },
@@ -111,7 +113,7 @@ class ScrollingSearch:
         response = await client.search(
             index=INDEX_NAME,
             body=body,
-            scroll=_TIMEOUT,
+            scroll=f"{_TIMEOUT}m",
         )
 
         page = SearchPage.FromResponse(
@@ -152,7 +154,7 @@ class ScrollingSearch:
         try:
             response = await client.scroll(
                 scroll_id=self.pages[-1].scroll_id,
-                scroll=_TIMEOUT,  # refresh
+                scroll=f"{_TIMEOUT}m",  # refresh
             )
         except Exception:
             self.expired = True
@@ -181,3 +183,9 @@ class ScrollingSearch:
             )
 
         await client.clear_scroll(scroll_id=self.pages[-1].scroll_id)
+
+
+SEARCHES: TTLCache[uuid.UUID, ScrollingSearch] = TTLCache(
+    maxsize=5000,
+    ttl=_TIMEOUT * 60,
+)

@@ -11,6 +11,8 @@ asyncpg==0.30.0
 alembic==1.15.2
 pydantic==2.11.3
 pydantic-settings==2.9.1
+cachetools==6.0.0
+types-cachetools==6.0.0.20250525
 python-dotenv==1.1.0
 colorlog==6.9.0
 python-json-logger==3.3.0

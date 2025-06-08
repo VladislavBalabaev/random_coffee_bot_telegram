@@ -10,7 +10,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from nespresso.bot.lib.messaging.filters import VerifiedFilter
+from nespresso.bot.lib.messaging.checks import CheckVerified
 from nespresso.bot.lib.messaging.stream import (
     MessageContext,
     ReceiveCallback,
@@ -19,7 +19,7 @@ from nespresso.bot.lib.messaging.stream import (
 )
 from nespresso.recsys.preprocessing.embedding import CalculateTokenLen
 from nespresso.recsys.preprocessing.model import TOKEN_LEN
-from nespresso.recsys.searchbase.search import ScrollingSearch, SearchPage
+from nespresso.recsys.searchbase.search import SEARCHES, ScrollingSearch, SearchPage
 
 router = Router()
 
@@ -40,28 +40,32 @@ class FindCallbackData(CallbackData, prefix="find"):
     search_id: uuid.UUID
 
 
-class FindKeyboard:
-    def __init__(self) -> None:
-        self.search_id = uuid.uuid4()
+def MarkupKeyboard(
+    search_id: uuid.UUID,
+    prev: bool = False,
+    next: bool = False,
+) -> InlineKeyboardMarkup | None:
+    def Button(action: FindAction) -> InlineKeyboardButton:
+        nonlocal search_id
 
-    def _Button(self, action: FindAction) -> InlineKeyboardButton:
+        callback_data = FindCallbackData(action=action, search_id=search_id).pack()
+
         return InlineKeyboardButton(
             text="⬅️" if action is FindAction.Prev else "➡️",
-            callback_data=FindCallbackData(
-                action=action,
-                search_id=self.search_id,
-            ).pack(),
+            callback_data=callback_data,
         )
 
-    def Markup(self, prev: bool = False, next: bool = False) -> InlineKeyboardMarkup:
-        buttons: list[InlineKeyboardButton] = []
+    buttons: list[InlineKeyboardButton] = []
 
-        if prev:
-            buttons.append(self._Button(FindAction.Prev))
-        if next:
-            buttons.append(self._Button(FindAction.Next))
+    if prev:
+        buttons.append(Button(FindAction.Prev))
+    if next:
+        buttons.append(Button(FindAction.Next))
 
-        return InlineKeyboardMarkup(inline_keyboard=[buttons])
+    if not buttons:
+        return None
+
+    return InlineKeyboardMarkup(inline_keyboard=[buttons])
 
 
 class FindStates(StatesGroup):
@@ -83,7 +87,7 @@ def FormatPage(page: SearchPage) -> str:
 async def CommandFind(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message)
 
-    if not await VerifiedFilter(chat_id=message.chat.id):
+    if not await CheckVerified(chat_id=message.chat.id):
         await SendMessage(
             chat_id=message.chat.id,
             text="Only registered users can use /find",
@@ -126,44 +130,34 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
         await state.clear()
         return
 
-    keyboard = FindKeyboard()
-    search_id = keyboard.search_id
+    search_id = uuid.uuid4()
+    SEARCHES[search_id] = search
 
     await SendMessage(
         chat_id=message.chat.id,
         text=FormatPage(page),
-        reply_markup=keyboard.Markup(next=True),
+        reply_markup=MarkupKeyboard(search_id=search_id, next=True),
     )
 
-    await state.set_state(None)
-    await state.update_data(
-        {
-            f"scrolling_search{search_id}": search,
-            f"keyboard{search_id}": keyboard,
-        }
-    )
+    await state.clear()
 
 
 @router.callback_query(FindCallbackData.filter())
 async def CommandFindCallback(
     callback_query: types.CallbackQuery,
     callback_data: FindCallbackData,
-    state: FSMContext,
 ) -> None:
     await ReceiveCallback(callback_query, callback_data)
     assert isinstance(callback_query.message, types.Message)
 
     search_id = callback_data.search_id
-    data = await state.get_data()
+    search: ScrollingSearch | None = SEARCHES.get(search_id, None)
 
-    if f"scrolling_search{search_id}" not in data:
+    if search is None:
         await callback_query.message.edit_reply_markup(reply_markup=None)
         await callback_query.answer("Search is expired")
 
         return
-
-    search: ScrollingSearch = data[f"scrolling_search{search_id}"]
-    keyboard: FindKeyboard = data[f"keyboard{search_id}"]
 
     page: SearchPage | None
     if callback_data.action == FindAction.Prev:
@@ -172,18 +166,18 @@ async def CommandFindCallback(
         page = await search.ScrollForward()
 
         if page is None:
-            if search.index > 0:
-                await callback_query.message.edit_reply_markup(
-                    reply_markup=keyboard.Markup(prev=True)
+            await callback_query.message.edit_reply_markup(
+                reply_markup=MarkupKeyboard(
+                    search_id=search_id,
+                    prev=search.index > 0,
                 )
-            else:
-                await callback_query.message.edit_reply_markup(reply_markup=None)
-
+            )
             await callback_query.answer("No more pages")
 
             return
 
-    markup = keyboard.Markup(
+    markup = MarkupKeyboard(
+        search_id=search_id,
         prev=search.CanScrollFutherBackward(),
         next=search.CanScrollFutherForward(),
     )
