@@ -1,10 +1,11 @@
 import logging
-from typing import Any
+from typing import Any, overload
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy.orm.attributes import InstrumentedAttribute
+from sqlalchemy.sql.elements import ColumnElement
 
 from nespresso.db.models.nes_user import NesUser
 from nespresso.db.repositories.checking import (
@@ -46,25 +47,59 @@ class NesUserRepository:
 
     # ----- Read -----
 
-    async def GetNesUser(self, nes_id: int) -> NesUser | None:
+    @overload
+    async def GetNesUsersOnCondition(
+        self,
+        condition: ColumnElement[bool] | InstrumentedAttribute[bool],
+        column: None = None,
+    ) -> list[NesUser] | None: ...
+
+    @overload
+    async def GetNesUsersOnCondition(
+        self,
+        condition: ColumnElement[bool] | InstrumentedAttribute[bool],
+        column: InstrumentedAttribute[Any],
+    ) -> list[Any] | None: ...
+
+    async def GetNesUsersOnCondition(
+        self,
+        condition: ColumnElement[bool] | InstrumentedAttribute[bool],
+        column: InstrumentedAttribute[Any] | None = None,
+    ) -> list[NesUser] | list[Any] | None:
+        selection = NesUser
+        if column is not None:
+            CheckColumnBelongsToModel(column, NesUser)
+            selection = getattr(NesUser, column.key)
+
         async with self.session() as session:
-            result = await session.execute(
-                select(NesUser).where(NesUser.nes_id == nes_id)
-            )
+            result = await session.execute(select(selection).where(condition))
 
-            return result.scalar_one_or_none()
+            return list(result.scalars().all())
 
-    async def GetNesUserColumn(
-        self, nes_id: int, column: InstrumentedAttribute[Any]
-    ) -> Any | None:
-        CheckColumnBelongsToModel(column, NesUser)
+    @overload
+    async def GetNesUser(
+        self,
+        nes_id: int,
+        column: None = None,
+    ) -> NesUser | None: ...
 
-        async with self.session() as session:
-            result = await session.execute(
-                select(getattr(NesUser, column.key)).where(NesUser.nes_id == nes_id)
-            )
+    @overload
+    async def GetNesUser(
+        self,
+        nes_id: int,
+        column: InstrumentedAttribute[Any],
+    ) -> Any | None: ...
 
-            return result.scalar_one_or_none()
+    async def GetNesUser(
+        self,
+        nes_id: int,
+        column: InstrumentedAttribute[Any] | None = None,
+    ) -> NesUser | Any | None:
+        result = await self.GetNesUsersOnCondition(
+            condition=NesUser.nes_id == nes_id,
+            column=column,
+        )
+        return result[0] if result else None
 
     # ----- Update -----
 

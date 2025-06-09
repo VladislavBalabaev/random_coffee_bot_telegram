@@ -26,13 +26,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0] - 2025-06-04 - Vlad
+## [0.1.0] - 2025-06-09 - Vlad
+
+### Updated
+
+- DB's NesUser repository
+
+## [0.1.0] - 2025-06-08 - Vlad
 
 ### Added
 
 - LRU & timeout ScrollingSearch holding
 
-## [0.1.0] - 2025-06-04 - Vlad
+## [0.1.0] - 2025-06-07 - Vlad
 
 ### Added
 
@@ -46,13 +52,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Change logging to timed rotating file handler
 - Store message_id
 
-## [0.1.0] - 2025-06-04 - Vlad
+## [0.1.0] - 2025-06-06 - Vlad
 
 ### Added
 
 - Scrolling search framework
 
-## [0.1.0] - 2025-06-04 - Vlad
+## [0.1.0] - 2025-06-05 - Vlad
 
 ### Added
 

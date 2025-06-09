@@ -66,6 +66,7 @@ class TgUserRepository:
     ) -> list[TgUser] | list[Any] | None:
         selection = TgUser
         if column is not None:
+            CheckColumnBelongsToModel(column, TgUser)
             selection = getattr(TgUser, column.key)
 
         async with self.session() as session:
