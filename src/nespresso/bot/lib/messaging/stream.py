@@ -55,9 +55,9 @@ async def SendDocument(
     except TelegramBadRequest:
         addendum = MessageContext.BadRequest
 
-    username = await GetChatTgUsername(chat_id)
+    username = await GetChatTgUsername(chat_id) or "-/-"
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum.value}{MessageContext.Document.value} {caption}"
+        f"chat_id={chat_id:<10} ({username + ")":<25} {MessageIO.Out.value}{addendum.value}{MessageContext.Document.value} {caption}"
     )
 
     return message
@@ -91,9 +91,9 @@ async def SendMessage(
     except TelegramBadRequest:
         addendum = MessageContext.BadRequest
 
-    username = await GetChatTgUsername(chat_id)
+    username = await GetChatTgUsername(chat_id) or "-/-"
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.Out.value}{addendum.value}{context.value} {text}"
+        f"chat_id={chat_id:<10} ({username + ")":<25} {MessageIO.Out.value}{addendum.value}{context.value} {repr(text)}"
     )
 
     return message
@@ -123,28 +123,32 @@ async def ReceiveMessage(
     message: types.Message,
     context: MessageContext = MessageContext.No,
 ) -> None:
-    async def CheckNewUser(message: types.Message) -> None:
-        ctx = await user_ctx()
-
-        exists = await ctx.CheckTgUserExists(message.chat.id)
-
-        if not exists:
-            if message.from_user is not None:
-                await ctx.RegisterTgUser(
-                    chat_id=message.chat.id,
-                    username=message.from_user.username,
-                    full_name=message.from_user.full_name,
-                )
-            else:
-                await ctx.RegisterTgUser(chat_id=message.chat.id)
-
-    await CheckNewUser(message)
-
     chat_id = message.chat.id
 
-    username = await GetChatTgUsername(chat_id)
+    async def CheckNewUser() -> None:
+        nonlocal message, chat_id
+
+        ctx = await user_ctx()
+        exists = await ctx.CheckTgUserExists(chat_id)
+
+        if exists:
+            return
+
+        if message.from_user is None:
+            await ctx.RegisterTgUser(chat_id=chat_id)
+            return
+
+        await ctx.RegisterTgUser(
+            chat_id=chat_id,
+            username=message.from_user.username,
+            full_name=message.from_user.full_name,
+        )
+
+    await CheckNewUser()
+
+    username = await GetChatTgUsername(chat_id) or "-/-"
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{context.value} {message.text}"
+        f"chat_id={chat_id:<10} ({username + ")":<25} {MessageIO.In.value}{context.value} {repr(message.text)}"
     )
 
     ctx = await user_ctx()
@@ -162,8 +166,8 @@ async def ReceiveCallback(
     prefix = f"Callback: {callback_data.__prefix__}"
     dump = f"model_dump={callback_data.model_dump()}"
 
-    username = await GetChatTgUsername(chat_id)
+    username = await GetChatTgUsername(chat_id) or "-/-"
     logging.info(
-        f"chat_id={chat_id:<10} ({username:<25}) {MessageIO.In.value}{MessageContext.Callback.value}{context.value} {prefix}"
+        f"chat_id={chat_id:<10} ({username + ")":<25} {MessageIO.In.value}{MessageContext.Callback.value}{context.value} {prefix}"
     )
     logging.debug(f"chat_id={chat_id:<10}, {dump}")

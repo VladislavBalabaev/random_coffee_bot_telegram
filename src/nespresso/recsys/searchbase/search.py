@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import uuid
 from dataclasses import dataclass
@@ -6,6 +8,9 @@ from typing import Any
 from aiogram import types
 from cachetools import TTLCache
 
+from nespresso.bot.lib.chat.username import GetChatTgUsername
+from nespresso.db.models.tg_user import TgUser
+from nespresso.db.services.user_context import user_ctx
 from nespresso.recsys.searchbase.client import client
 from nespresso.recsys.searchbase.index import INDEX_NAME, DocAttr, DocSide
 
@@ -15,42 +20,91 @@ _KNN_LIMIT = 30
 
 
 @dataclass
-class SearchItem:
-    nes_id: int
+class Profile:
     score: float
-    text: str
+    nes_id: int
+    name: str
+    username: str
+    phone_number: str
+    email: str
+    description: str
 
     @classmethod
-    def FromHit(cls, hit: dict[Any, Any]) -> "SearchItem":
+    async def FromHit(cls, hit: dict[Any, Any]) -> Profile:
+        nes_id = int(hit["_id"])
+
+        ctx = await user_ctx()
+        chat_id = await ctx.GetTgChatIdBy(nes_id)
+
+        username = "[doesn't use this bot]"
+        phone_number = "-/-"
+        if chat_id:
+            if tg := await GetChatTgUsername(chat_id):
+                username = tg
+
+            if tg := await ctx.GetTgUser(chat_id=chat_id, column=TgUser.phone_number):
+                phone_number = tg
+
+        name = "-/-"
+        email = "-/-"
+        if nes_user := await ctx.GetNesUser(nes_id=nes_id):
+            name = nes_user.name or "-/-"
+            email = nes_user.email_primary or "-/-"
+
+        # TODO: add programm'year and format. For that need to see the data.
+
         return cls(
-            nes_id=int(hit["_id"]),
             score=float(hit["_score"]),
-            text=str(hit["_source"][f"{DocSide.cv.value}_{DocAttr.Field.text.value}"]),
+            nes_id=nes_id,
+            name=name,
+            username=username,
+            phone_number=phone_number,
+            email=email,
+            description=str(
+                hit["_source"][f"{DocSide.cv.value}_{DocAttr.Field.text.value}"]
+            ),
         )
 
 
 @dataclass
-class SearchPage:
-    number: int
-    items: list[SearchItem]
+class Page:
     scroll_id: str
-
-    @staticmethod
-    def _ExtractItems(response: dict[Any, Any]) -> list[SearchItem]:
-        return [SearchItem.FromHit(hit) for hit in response["hits"]["hits"]]
+    number: int
+    profile: Profile
+    final_text: str | None = None
 
     @classmethod
-    def FromResponse(cls, response: dict[Any, Any], number: int) -> "SearchPage":
+    async def FromResponse(cls, response: dict[Any, Any], number: int) -> Page | None:
+        hits = response["hits"]["hits"]
+        assert len(hits) <= 1
+
+        if not hits:
+            return None
+
         return cls(
-            number=number,
-            items=SearchPage._ExtractItems(response),
             scroll_id=response["_scroll_id"],
+            number=number,
+            profile=await Profile.FromHit(hits[0]),
         )
+
+    def GetFormattedText(self) -> str:
+        if self.final_text:
+            return self.final_text
+
+        self.final_text = ""
+        self.final_text += f"[Page: {self.number}]\n\n"
+        self.final_text += f"{self.profile.name}, "
+        self.final_text += f"{self.profile.username}\n"
+        self.final_text += f"phone: {self.profile.phone_number}\n"
+        self.final_text += f"email: {self.profile.email}\n\n"
+        self.final_text += f"{self.profile.description}"
+
+        return self.final_text
 
 
 class ScrollingSearch:
     def __init__(self) -> None:
-        self.pages: list[SearchPage] = []
+        self.pages: list[Page] = []
         self.index: int = 0
         self.expired = False
 
@@ -101,10 +155,10 @@ class ScrollingSearch:
 
         return body
 
-    def _CurrentPage(self) -> SearchPage:
+    def _CurrentPage(self) -> Page:
         return self.pages[self.index]
 
-    async def HybridSearch(self, message: types.Message) -> SearchPage | None:
+    async def HybridSearch(self, message: types.Message) -> Page | None:
         if self.pages:
             raise ValueError("HybridSearch() was called more than once.")
 
@@ -116,11 +170,12 @@ class ScrollingSearch:
             scroll=f"{_TIMEOUT}m",
         )
 
-        page = SearchPage.FromResponse(
+        page = await Page.FromResponse(
             response=response,
             number=self.index,
         )
-        self.pages = [page]
+        if page:
+            self.pages = [page]
 
         # TODO: check for score (if it is high enough) and output `None`
 
@@ -129,7 +184,7 @@ class ScrollingSearch:
     def CanScrollFutherBackward(self) -> bool:
         return self.index > 0
 
-    async def ScrollBackward(self) -> SearchPage:
+    async def ScrollBackward(self) -> Page:
         if self.index == 0:
             raise ValueError("Can't scroll futher backward.")
 
@@ -140,7 +195,7 @@ class ScrollingSearch:
     def CanScrollFutherForward(self) -> bool:
         return self.index < self.pages[-1].number or not self.expired
 
-    async def ScrollForward(self) -> SearchPage | None:
+    async def ScrollForward(self) -> Page | None:
         if not self.pages:
             raise ValueError("HybridSearch() must be called before scrolling forward.")
 
@@ -160,12 +215,12 @@ class ScrollingSearch:
             self.expired = True
             return None
 
-        page = SearchPage.FromResponse(
+        page = await Page.FromResponse(
             response=response,
             number=self.index + 1,
         )
 
-        if not page.items:
+        if not page:
             self.expired = True
             return None
 

@@ -19,7 +19,7 @@ from nespresso.bot.lib.messaging.stream import (
 )
 from nespresso.recsys.preprocessing.embedding import CalculateTokenLen
 from nespresso.recsys.preprocessing.model import TOKEN_LEN
-from nespresso.recsys.searchbase.search import SEARCHES, ScrollingSearch, SearchPage
+from nespresso.recsys.searchbase.search import SEARCHES, Page, ScrollingSearch
 
 router = Router()
 
@@ -71,16 +71,6 @@ def MarkupKeyboard(
 class FindStates(StatesGroup):
     Text = State()
     Forward = State()
-
-
-# TODO: do actual formatting
-def FormatPage(page: SearchPage) -> str:
-    assert len(page.items) == 1
-
-    text = f"[Page: {page.number}]\n\n"
-    text += f"{page.items[0].text}"
-
-    return text
 
 
 @router.message(StateFilter(None), Command("find"))
@@ -135,7 +125,7 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
 
     await SendMessage(
         chat_id=message.chat.id,
-        text=FormatPage(page),
+        text=page.GetFormattedText(),
         reply_markup=MarkupKeyboard(search_id=search_id, next=True),
     )
 
@@ -159,7 +149,7 @@ async def CommandFindCallback(
 
         return
 
-    page: SearchPage | None
+    page: Page | None
     if callback_data.action == FindAction.Prev:
         page = await search.ScrollBackward()
     else:
@@ -183,7 +173,7 @@ async def CommandFindCallback(
     )
 
     await callback_query.message.edit_text(
-        text=FormatPage(page),
+        text=page.GetFormattedText(),
         reply_markup=markup,
     )
     await callback_query.answer()
