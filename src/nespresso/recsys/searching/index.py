@@ -2,9 +2,9 @@ import logging
 from dataclasses import dataclass
 from enum import Enum
 
-from nespresso.recsys.preprocessing.embedding import CreateEmbedding
-from nespresso.recsys.preprocessing.model import EMBEDDING_LEN
-from nespresso.recsys.searchbase.client import client
+from nespresso.recsys.searching.client import client
+from nespresso.recsys.searching.preprocessing.embedding import CreateEmbedding
+from nespresso.recsys.searching.preprocessing.model import EMBEDDING_LEN
 
 INDEX_NAME = "nes_users"
 

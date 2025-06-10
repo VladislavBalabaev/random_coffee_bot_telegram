@@ -1,5 +1,5 @@
-from nespresso.recsys.searchbase.document import UpsertTextOpenSearch
-from nespresso.recsys.searchbase.index import (
+from nespresso.recsys.searching.document import UpsertTextOpenSearch
+from nespresso.recsys.searching.index import (
     DeleteOpenSearchIndex,
     DocSide,
     EnsureOpenSearchIndex,

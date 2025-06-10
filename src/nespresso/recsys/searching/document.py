@@ -1,7 +1,7 @@
 import logging
 
-from nespresso.recsys.searchbase.client import client
-from nespresso.recsys.searchbase.index import INDEX_NAME, DocAttr, DocSide
+from nespresso.recsys.searching.client import client
+from nespresso.recsys.searching.index import INDEX_NAME, DocAttr, DocSide
 
 
 async def UpsertTextOpenSearch(

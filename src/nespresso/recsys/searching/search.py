@@ -8,11 +8,9 @@ from typing import Any
 from aiogram import types
 from cachetools import TTLCache
 
-from nespresso.bot.lib.chat.username import GetChatTgUsername
-from nespresso.db.models.tg_user import TgUser
-from nespresso.db.services.user_context import user_ctx
-from nespresso.recsys.searchbase.client import client
-from nespresso.recsys.searchbase.index import INDEX_NAME, DocAttr, DocSide
+from nespresso.recsys.profile import Profile
+from nespresso.recsys.searching.client import client
+from nespresso.recsys.searching.index import INDEX_NAME, DocAttr, DocSide
 
 _TIMEOUT = 60  # alive for 1 hour
 _SCROLL_LIMIT = 1
@@ -20,55 +18,9 @@ _KNN_LIMIT = 30
 
 
 @dataclass
-class Profile:
-    score: float
-    nes_id: int
-    name: str
-    username: str
-    phone_number: str
-    email: str
-    description: str
-
-    @classmethod
-    async def FromHit(cls, hit: dict[Any, Any]) -> Profile:
-        nes_id = int(hit["_id"])
-
-        ctx = await user_ctx()
-        chat_id = await ctx.GetTgChatIdBy(nes_id)
-
-        username = "[doesn't use this bot]"
-        phone_number = "-/-"
-        if chat_id:
-            if tg := await GetChatTgUsername(chat_id):
-                username = tg
-
-            if tg := await ctx.GetTgUser(chat_id=chat_id, column=TgUser.phone_number):
-                phone_number = tg
-
-        name = "-/-"
-        email = "-/-"
-        if nes_user := await ctx.GetNesUser(nes_id=nes_id):
-            name = nes_user.name or "-/-"
-            email = nes_user.email_primary or "-/-"
-
-        # TODO: add programm'year and format. For that need to see the data.
-
-        return cls(
-            score=float(hit["_score"]),
-            nes_id=nes_id,
-            name=name,
-            username=username,
-            phone_number=phone_number,
-            email=email,
-            description=str(
-                hit["_source"][f"{DocSide.cv.value}_{DocAttr.Field.text.value}"]
-            ),
-        )
-
-
-@dataclass
 class Page:
     scroll_id: str
+    score: float
     number: int
     profile: Profile
     final_text: str | None = None
@@ -81,23 +33,21 @@ class Page:
         if not hits:
             return None
 
+        hit = hits[0]
+        nes_id = int(hit["_id"])
+
         return cls(
             scroll_id=response["_scroll_id"],
+            score=float(hit["_score"]),
             number=number,
-            profile=await Profile.FromHit(hits[0]),
+            profile=await Profile.FromNesId(nes_id),
         )
 
     def GetFormattedText(self) -> str:
-        if self.final_text:
-            return self.final_text
-
-        self.final_text = ""
-        self.final_text += f"[Page: {self.number}]\n\n"
-        self.final_text += f"{self.profile.name}, "
-        self.final_text += f"{self.profile.username}\n"
-        self.final_text += f"phone: {self.profile.phone_number}\n"
-        self.final_text += f"email: {self.profile.email}\n\n"
-        self.final_text += f"{self.profile.description}"
+        if not self.final_text:
+            self.final_text = (
+                f"[Page: {self.number}]\n\n{self.profile.DescribeProfile()}"
+            )
 
         return self.final_text
 
@@ -118,7 +68,7 @@ class ScrollingSearch:
 
         body = {
             "size": _SCROLL_LIMIT,
-            "_source": True,
+            "_source": False,
             "query": {
                 "bool": {  # composite query
                     "should": [  # scores are summed

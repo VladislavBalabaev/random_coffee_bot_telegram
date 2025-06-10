@@ -1,6 +1,6 @@
 from keybert import KeyBERT  # type: ignore
 
-from nespresso.recsys.preprocessing.model import model
+from nespresso.recsys.searching.preprocessing.model import model
 
 keyword_model = KeyBERT(model=model)
 

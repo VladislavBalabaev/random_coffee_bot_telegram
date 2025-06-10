@@ -1,4 +1,4 @@
-from nespresso.recsys.preprocessing.model import model
+from nespresso.recsys.searching.preprocessing.model import model
 
 
 def CalculateTokenLen(text: str) -> int:
