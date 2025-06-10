@@ -12,14 +12,14 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from nespresso.bot.lib.messaging.checks import CheckVerified
 from nespresso.bot.lib.messaging.stream import (
-    MessageContext,
+    MsgContext,
     ReceiveCallback,
     ReceiveMessage,
     SendMessage,
 )
 from nespresso.recsys.preprocessing.embedding import CalculateTokenLen
 from nespresso.recsys.preprocessing.model import TOKEN_LEN
-from nespresso.recsys.searchbase.search import SEARCHES, Page, ScrollingSearch
+from nespresso.recsys.searching.search import SEARCHES, Page, ScrollingSearch
 
 router = Router()
 
@@ -100,7 +100,7 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
         await SendMessage(
             chat_id=message.chat.id,
             text=f"Your text is too long.\nPlease, reduce it by {PrecentageToReduce(message.text)}%",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 

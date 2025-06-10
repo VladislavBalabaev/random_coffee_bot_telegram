@@ -6,9 +6,10 @@ from aiogram.fsm.state import State, StatesGroup
 
 from nespresso.bot.lib.messaging.filters import AdminFilter
 from nespresso.bot.lib.messaging.stream import (
+    PersonalMsg,
     ReceiveMessage,
     SendMessage,
-    SendMessageToGroup,
+    SendMessagesToGroup,
 )
 from nespresso.db.services.user_context import user_ctx
 
@@ -35,7 +36,8 @@ async def CommandSendaMessage(message: types.Message, state: FSMContext) -> None
     ctx = await user_ctx()
     chat_ids = await ctx.GetVerifiedTgUsersChatId()
 
-    await SendMessageToGroup(chat_ids=chat_ids, text=message.text)
+    messages = [PersonalMsg(chat_id=chat_id, text=message.text) for chat_id in chat_ids]
+    await SendMessagesToGroup(messages)
 
     await SendMessage(chat_id=message.chat.id, text="Done")
     await state.clear()

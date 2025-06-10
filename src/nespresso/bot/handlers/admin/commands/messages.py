@@ -5,7 +5,7 @@ from aiogram.filters.state import StateFilter
 from nespresso.bot.lib.messaging.file import SendTemporaryFileFromText, ToJSONText
 from nespresso.bot.lib.messaging.filters import AdminFilter
 from nespresso.bot.lib.messaging.stream import (
-    MessageContext,
+    MsgContext,
     ReceiveMessage,
     SendMessage,
 )
@@ -22,7 +22,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="Include tg username and limit:\n/messages @vbalab 15",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -35,7 +35,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="User with such credentials doesn't exist.\nAborting",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -43,7 +43,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="Limit should be a number, e.g. 50\nTry again",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 

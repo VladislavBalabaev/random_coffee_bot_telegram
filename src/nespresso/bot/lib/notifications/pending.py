@@ -1,5 +1,5 @@
 from nespresso.bot.lib.messaging.stream import (
-    MessageContext,
+    MsgContext,
     ReceiveMessage,
     SendMessage,
 )
@@ -23,7 +23,7 @@ async def ProcessPendingUpdates() -> None:
 
         chat_id = message.chat.id
 
-        await ReceiveMessage(message=message, context=MessageContext.Pending)
+        await ReceiveMessage(message=message, context=MsgContext.Pending)
 
         if chat_id not in notified_users:
             await SendMessage(

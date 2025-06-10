@@ -6,7 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from nespresso.bot.lib.messaging.filters import AdminFilter
 from nespresso.bot.lib.messaging.stream import (
-    MessageContext,
+    MsgContext,
     ReceiveMessage,
     SendMessage,
 )
@@ -29,7 +29,7 @@ async def CommandSend(
         await SendMessage(
             chat_id=message.chat.id,
             text="Include tg username:\n/send @vbalab",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -40,7 +40,7 @@ async def CommandSend(
         await SendMessage(
             chat_id=message.chat.id,
             text="User with such credentials doesn't exist.\nAborting",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         await state.clear()
         return

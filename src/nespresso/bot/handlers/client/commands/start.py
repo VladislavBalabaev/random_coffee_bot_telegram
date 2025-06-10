@@ -10,7 +10,7 @@ from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemo
 from nespresso.bot.handlers.client.email.verification import CreateCode
 from nespresso.bot.lib.messaging.checks import CheckVerified
 from nespresso.bot.lib.messaging.stream import (
-    MessageContext,
+    MsgContext,
     ReceiveMessage,
     SendMessage,
 )
@@ -64,7 +64,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
         await SendMessage(
             chat_id=message.chat.id,
             text="❌ Please share your phone number using the button below.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -72,7 +72,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
         await SendMessage(
             chat_id=message.chat.id,
             text="❌ Could not retrieve your phone number since you're not a telegram user.\nPlease try again from your user profile",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -80,7 +80,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
         await SendMessage(
             chat_id=message.chat.id,
             text="❌ You sent someone else's phone number.\nPlease share your own number.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -116,7 +116,7 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="An email should have '@nes.ru' in it",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
@@ -159,7 +159,7 @@ async def CommandStartEmailConfirm(message: types.Message, state: FSMContext) ->
         await SendMessage(
             chat_id=message.chat.id,
             text="The code is incorrect.\nPlease try again",
-            context=MessageContext.UserFailed,
+            context=MsgContext.UserFailed,
         )
         return
 
