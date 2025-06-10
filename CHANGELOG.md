@@ -28,6 +28,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.1.0] - 2025-06-10 - Vlad
 
+### Added
+
+- Description attribute to TgUser
+
 ### Updated
 
 - Regrouping files of searching in recsys
