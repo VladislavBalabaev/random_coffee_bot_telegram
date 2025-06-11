@@ -20,27 +20,18 @@ class TgUserRepository:
 
     # ----- Create -----
 
-    async def CreateTgUser(
-        self,
-        chat_id: int,
-        username: str | None = None,
-        full_name: str | None = None,
-    ) -> None:
+    async def CreateTgUser(self, chat_id: int) -> None:
         async with self.session() as session:
             try:
-                session.add(
-                    TgUser(chat_id=chat_id, username=username, full_name=full_name)
-                )
+                session.add(TgUser(chat_id=chat_id))
 
                 await session.commit()
-                logging.info(
-                    f"TgUser(chat_id={chat_id}, username={username}, full_name={full_name}) created successfully."
-                )
+                logging.info(f"TgUser(chat_id={chat_id}) created successfully.")
 
             except IntegrityError:
                 await session.rollback()
                 logging.error(
-                    f"TgUser(chat_id={chat_id}, username={username}, full_name={full_name}) already exists. Creation failed."
+                    f"TgUser(chat_id={chat_id}) already exists. Creation failed."
                 )
 
     # ----- Read -----

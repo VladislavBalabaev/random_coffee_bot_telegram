@@ -131,28 +131,17 @@ async def ReceiveMessage(
     message: types.Message,
     context: MsgContext = MsgContext.No,
 ) -> None:
-    chat_id = message.chat.id
-
-    async def CheckNewUser() -> None:
-        nonlocal message, chat_id
-
+    async def CheckNewUser(chat_id: int) -> None:
         ctx = await user_ctx()
         exists = await ctx.CheckTgUserExists(chat_id)
 
         if exists:
             return
 
-        if message.from_user is None:
-            await ctx.RegisterTgUser(chat_id=chat_id)
-            return
+        await ctx.RegisterTgUser(chat_id=chat_id)
 
-        await ctx.RegisterTgUser(
-            chat_id=chat_id,
-            username=message.from_user.username,
-            full_name=message.from_user.full_name,
-        )
-
-    await CheckNewUser()
+    chat_id = message.chat.id
+    await CheckNewUser(chat_id)
 
     username = await GetChatTgUsername(chat_id) or "-/-"
     logging.info(

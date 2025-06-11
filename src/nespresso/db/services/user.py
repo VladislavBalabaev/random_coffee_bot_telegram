@@ -10,14 +10,14 @@ class UserService:
         self.tg_user_repo = tg_user_repo
         self.nes_user_repo = nes_user_repo
 
-        # ----- Create -----
+        # --- Create ---
         # - Tg -
         self.RegisterTgUser = self.tg_user_repo.CreateTgUser
 
         # - Nes -
         self.UpsertNesUser = self.nes_user_repo.UpsertNesUsers
 
-        # ----- Read -----
+        # --- Read ---
         # - Tg -
         self.GetTgUsersOnCondition = self.tg_user_repo.GetTgUsersOnCondition
         self.GetTgUser = self.tg_user_repo.GetTgUser
@@ -27,15 +27,15 @@ class UserService:
         self.GetNesUsersOnCondition = self.nes_user_repo.GetNesUsersOnCondition
         self.GetNesUser = self.nes_user_repo.GetNesUser
 
-        # ----- Update -----
+        # --- Update ---
         # - Tg -
         self.UpdateTgUser = self.tg_user_repo.UpdateTgUser
 
-        # ----- Delete -----
+        # --- Delete ---
 
-    # ----- Create -----
+    # --- Create ---
 
-    # ----- Read -----
+    # --- Read ---
     # - Tg -
     async def CheckTgUserExists(self, chat_id: int) -> bool:
         result = await self.GetTgUser(
@@ -61,6 +61,6 @@ class UserService:
 
         return result
 
-    # ----- Update -----
+    # --- Update ---
 
-    # ----- Delete -----
+    # --- Delete ---

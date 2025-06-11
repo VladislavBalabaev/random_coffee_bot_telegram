@@ -21,24 +21,7 @@ class UserContextService(UserService, MessageService):
         )
         MessageService.__init__(self, message_service.message_repo)
 
-    # async def GetRecentMessages(
-    #     self,
-    #     chat_id: int | None = None,
-    #     tg_username: str | None = None,
-    #     nes_id: int | None = None,
-    #     nes_email: str | None = None,
-    #     limit: int = 10,
-    # ) -> list[Message]:
-    #     chat_id = await self.GetTgChatIdBy(
-    #         chat_id=chat_id, tg_username=tg_username, nes_id=nes_id, nes_email=nes_email
-    #     )
-
-    #     if chat_id is None:
-    #         return []
-
-    #     result = await self.message_repo.GetRecentMessages(chat_id, limit)
-
-    #     return result
+    # async def ...
 
 
 async def GetUserContextService() -> UserContextService:
