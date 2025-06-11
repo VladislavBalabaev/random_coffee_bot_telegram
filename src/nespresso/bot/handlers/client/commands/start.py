@@ -8,12 +8,8 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 from nespresso.bot.handlers.client.email.verification import CreateCode
-from nespresso.bot.lib.messaging.checks import CheckVerified
-from nespresso.bot.lib.messaging.stream import (
-    MsgContext,
-    ReceiveMessage,
-    SendMessage,
-)
+from nespresso.bot.lib.message.checks import CheckVerified
+from nespresso.bot.lib.message.io import ContextIO, SendMessage
 from nespresso.db.models.tg_user import TgUser
 from nespresso.db.services.user_context import user_ctx
 
@@ -29,8 +25,6 @@ class StartStates(StatesGroup):
 
 @router.message(StateFilter(None), Command("start"))
 async def CommandStart(message: types.Message, state: FSMContext) -> None:
-    await ReceiveMessage(message)
-
     if await CheckVerified(chat_id=message.chat.id):
         await SendMessage(
             chat_id=message.chat.id,
@@ -58,13 +52,11 @@ async def CommandStart(message: types.Message, state: FSMContext) -> None:
 
 @router.message(StateFilter(StartStates.GetPhoneNumber))
 async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) -> None:
-    await ReceiveMessage(message)
-
     if message.contact is None:
         await SendMessage(
             chat_id=message.chat.id,
             text="❌ Please share your phone number using the button below.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -72,7 +64,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
         await SendMessage(
             chat_id=message.chat.id,
             text="❌ Could not retrieve your phone number since you're not a telegram user.\nPlease try again from your user profile",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -80,7 +72,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
         await SendMessage(
             chat_id=message.chat.id,
             text="❌ You sent someone else's phone number.\nPlease share your own number.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -107,7 +99,6 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
 
 @router.message(StateFilter(StartStates.EmailGet), F.content_type == "text")
 async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> None:
-    await ReceiveMessage(message)
     assert message.text is not None
 
     email = message.text.replace(" ", "")
@@ -116,7 +107,7 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="An email should have '@nes.ru' in it",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -148,7 +139,6 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
 
 @router.message(StateFilter(StartStates.EmailConfirm), F.content_type == "text")
 async def CommandStartEmailConfirm(message: types.Message, state: FSMContext) -> None:
-    await ReceiveMessage(message)
     assert message.text is not None
 
     data = await state.get_data()
@@ -159,7 +149,7 @@ async def CommandStartEmailConfirm(message: types.Message, state: FSMContext) ->
         await SendMessage(
             chat_id=message.chat.id,
             text="The code is incorrect.\nPlease try again",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 

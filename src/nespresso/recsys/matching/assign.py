@@ -2,7 +2,7 @@ import logging
 import random
 from dataclasses import dataclass
 
-from nespresso.bot.lib.messaging.stream import PersonalMsg, SendMessagesToGroup
+from nespresso.bot.lib.message.io import PersonalMsg, SendMessagesToGroup
 from nespresso.db.models.tg_user import TgUser
 from nespresso.db.services.user_context import user_ctx
 from nespresso.recsys.matching.emoji import RandomEmoji
@@ -40,7 +40,7 @@ def MatchUsers(chat_ids: list[int]) -> list[Pair]:
 async def CreateMatching() -> list[Pair]:
     ctx = await user_ctx()
 
-    chat_ids = await ctx.GetActiveMatchingTgUsersChatId()
+    chat_ids = await ctx.GetActiveTgUsersChatId()
 
     return MatchUsers(chat_ids)
 

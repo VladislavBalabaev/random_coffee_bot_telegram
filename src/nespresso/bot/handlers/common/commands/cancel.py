@@ -2,7 +2,7 @@ from aiogram import Router, types
 from aiogram.filters.command import Command
 from aiogram.fsm.context import FSMContext
 
-from nespresso.bot.lib.messaging.stream import ReceiveMessage, SendMessage
+from nespresso.bot.lib.message.io import ReceiveMessage, SendMessage
 
 router = Router()
 
@@ -16,7 +16,9 @@ async def CommandCancel(message: types.Message, state: FSMContext) -> None:
     await ReceiveMessage(message=message)
 
     await SendMessage(
-        message.chat.id, "Canceled", reply_markup=types.ReplyKeyboardRemove()
+        chat_id=message.chat.id,
+        text="Canceled",
+        reply_markup=types.ReplyKeyboardRemove(),
     )
 
     await state.clear()

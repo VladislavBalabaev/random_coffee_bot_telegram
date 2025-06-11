@@ -13,23 +13,28 @@ from nespresso.bot.lifecycle.creator import bot
 from nespresso.db.services.user_context import user_ctx
 
 
-class MsgContext(str, Enum):
+class ContextIO(str, Enum):
     No = ""
     Error = " \033[91m[Error]\033[0m"
     Blocked = " \033[91m[Blocked]\033[0m"
     BadRequest = " \033[91m[BadRequest]\033[0m"
     UserFailed = " \033[91m[UserFailed]\033[0m"
     Callback = " \033[92m[Callback]\033[0m"
-    Document = " \033[92m[Document]\033[0m"
-    ToAllRegistered = " \033[92m[ToAllRegistered]\033[0m"
+    Doc = " \033[92m[Document]\033[0m"
     Pending = " \033[96m[Pending]\033[0m"
     ZeroMessage = " \033[96m[ZeroMessage]\033[0m"
     NoText = " \033[96m[NoText]\033[0m"
 
 
-class MsgIO(str, Enum):
+class SignIO(str, Enum):
     In = "\033[35m>>\033[0m"
     Out = "\033[36m<<\033[0m"
+
+
+async def GetChatUserLoggingPart(chat_id: int) -> str:
+    username = await GetChatTgUsername(chat_id) or "-/-"
+
+    return f"chat_id={chat_id:<10} ({username + ")":<25}"
 
 
 async def SendDocument(
@@ -37,7 +42,7 @@ async def SendDocument(
     document: types.FSInputFile,
     caption: str | None = None,
 ) -> types.Message | None:
-    addendum = MsgContext.No
+    add = ContextIO.No
 
     message: types.Message | None = None
     try:
@@ -51,15 +56,13 @@ async def SendDocument(
         await ctx.RegisterOutgoingMessage(message)
 
     except TelegramForbiddenError:
-        addendum = MsgContext.Blocked
+        add = ContextIO.Blocked
 
     except TelegramBadRequest:
-        addendum = MsgContext.BadRequest
+        add = ContextIO.BadRequest
 
-    username = await GetChatTgUsername(chat_id) or "-/-"
-    logging.info(
-        f"chat_id={chat_id:<10} ({username + ")":<25} {MsgIO.Out.value}{addendum.value}{MsgContext.Document.value} {caption}"
-    )
+    part = await GetChatUserLoggingPart(chat_id)
+    logging.info(f"{part} {SignIO.Out.value}{add.value}{ContextIO.Doc.value} {caption}")
 
     return message
 
@@ -73,9 +76,9 @@ async def SendMessage(
         | types.InlineKeyboardMarkup
         | None
     ) = None,
-    context: MsgContext = MsgContext.No,
+    context: ContextIO = ContextIO.No,
 ) -> types.Message | None:
-    addendum = MsgContext.No
+    add = ContextIO.No
 
     message: types.Message | None = None
     try:
@@ -88,15 +91,13 @@ async def SendMessage(
         ctx = await user_ctx()
         await ctx.RegisterOutgoingMessage(message)
     except TelegramForbiddenError:
-        addendum = MsgContext.Blocked
+        add = ContextIO.Blocked
         # TODO: make his matching inactive & but DON'T make him unverified
     except TelegramBadRequest:
-        addendum = MsgContext.BadRequest
+        add = ContextIO.BadRequest
 
-    username = await GetChatTgUsername(chat_id) or "-/-"
-    logging.info(
-        f"chat_id={chat_id:<10} ({username + ")":<25} {MsgIO.Out.value}{addendum.value}{context.value} {repr(text)}"
-    )
+    part = await GetChatUserLoggingPart(chat_id)
+    logging.info(f"{part} {SignIO.Out.value}{add.value}{context.value} {repr(text)}")
 
     return message
 
@@ -114,11 +115,7 @@ async def SendMessagesToGroup(messages: list[PersonalMsg]) -> None:
         nonlocal limiter
 
         async with limiter:
-            await SendMessage(
-                chat_id=message.chat_id,
-                text=message.text,
-                context=MsgContext.ToAllRegistered,
-            )
+            await SendMessage(chat_id=message.chat_id, text=message.text)
 
     tasks = []
     for message in messages:
@@ -127,10 +124,13 @@ async def SendMessagesToGroup(messages: list[PersonalMsg]) -> None:
     await asyncio.gather(*tasks)
 
 
-async def ReceiveMessage(
-    message: types.Message,
-    context: MsgContext = MsgContext.No,
-) -> None:
+# TODO: make him active if he is verified
+
+# TODO: ReceiveMessage through dp
+# TODO: ReceiveCallback through dp
+
+
+async def ReceiveMessage(message: types.Message) -> None:
     async def CheckNewUser(chat_id: int) -> None:
         ctx = await user_ctx()
         exists = await ctx.CheckTgUserExists(chat_id)
@@ -143,10 +143,8 @@ async def ReceiveMessage(
     chat_id = message.chat.id
     await CheckNewUser(chat_id)
 
-    username = await GetChatTgUsername(chat_id) or "-/-"
-    logging.info(
-        f"chat_id={chat_id:<10} ({username + ")":<25} {MsgIO.In.value}{context.value} {repr(message.text)}"
-    )
+    part = await GetChatUserLoggingPart(chat_id)
+    logging.info(f"{part} {SignIO.In.value} {repr(message.text)}")
 
     ctx = await user_ctx()
     await ctx.RegisterIncomingMessage(message)
@@ -155,16 +153,13 @@ async def ReceiveMessage(
 async def ReceiveCallback(
     callback_query: types.CallbackQuery,
     callback_data: CallbackData,
-    context: MsgContext = MsgContext.No,
 ) -> None:
     assert isinstance(callback_query.message, types.Message)
 
     chat_id = callback_query.message.chat.id
-    prefix = f"Callback: {callback_data.__prefix__}"
-    dump = f"model_dump={callback_data.model_dump()}"
 
-    username = await GetChatTgUsername(chat_id) or "-/-"
+    part = await GetChatUserLoggingPart(chat_id)
     logging.info(
-        f"chat_id={chat_id:<10} ({username + ")":<25} {MsgIO.In.value}{MsgContext.Callback.value}{context.value} {prefix}"
+        f"{part} {SignIO.In.value} {ContextIO.Callback.value} {callback_data.__prefix__}"
     )
-    logging.debug(f"chat_id={chat_id:<10}, {dump}")
+    logging.debug(f"{part}, model_dump={callback_data.model_dump()}")

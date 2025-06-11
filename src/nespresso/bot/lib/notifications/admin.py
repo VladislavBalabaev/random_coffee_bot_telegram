@@ -2,7 +2,7 @@ import logging
 
 from aiogram import types
 
-from nespresso.bot.lib.messaging.stream import SendDocument, SendMessage
+from nespresso.bot.lib.message.io import SendDocument, SendMessage
 from nespresso.core.configs.constants import ADMIN_CHAT_IDS
 from nespresso.core.configs.paths import PATH_BOT_LOGS
 

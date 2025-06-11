@@ -2,13 +2,9 @@ from aiogram import Router, types
 from aiogram.filters.command import Command, CommandObject
 from aiogram.filters.state import StateFilter
 
-from nespresso.bot.lib.messaging.file import SendTemporaryFileFromText, ToJSONText
-from nespresso.bot.lib.messaging.filters import AdminFilter
-from nespresso.bot.lib.messaging.stream import (
-    MsgContext,
-    ReceiveMessage,
-    SendMessage,
-)
+from nespresso.bot.lib.message.file import SendTemporaryFileFromText, ToJSONText
+from nespresso.bot.lib.message.filters import AdminFilter
+from nespresso.bot.lib.message.io import ContextIO, SendMessage
 from nespresso.db.services.user_context import user_ctx
 
 router = Router()
@@ -16,13 +12,11 @@ router = Router()
 
 @router.message(Command("messages"), StateFilter(None), AdminFilter())
 async def CommandMessages(message: types.Message, command: CommandObject) -> None:
-    await ReceiveMessage(message)
-
     if not command.args or len(command.args.split()) != 2:  # noqa: PLR2004
         await SendMessage(
             chat_id=message.chat.id,
             text="Include tg username and limit:\n/messages @vbalab 15",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -35,7 +29,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="User with such credentials doesn't exist.\nAborting",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -43,7 +37,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
         await SendMessage(
             chat_id=message.chat.id,
             text="Limit should be a number, e.g. 50\nTry again",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 

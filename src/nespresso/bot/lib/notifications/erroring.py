@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types.error_event import ErrorEvent
 
-from nespresso.bot.lib.messaging.stream import MsgContext, SendDocument, SendMessage
+from nespresso.bot.lib.message.io import ContextIO, SendDocument, SendMessage
 from nespresso.bot.lifecycle.creator import BOT_ID, dp
 from nespresso.core.configs.constants import ADMIN_CHAT_IDS
 from nespresso.core.configs.paths import PATH_BOT_LOGS
@@ -55,7 +55,7 @@ async def AiogramExceptionHandler(event: ErrorEvent) -> bool:
         await SendMessage(
             chat_id,
             text="Oops, something went wrong.\nWe've logged the error.\n\nIf the issue isn't resolved soon, feel free to reach out to @vbalab",
-            context=MsgContext.Error,
+            context=ContextIO.Error,
         )
 
     await NotifyAdminsOfError(event.exception)

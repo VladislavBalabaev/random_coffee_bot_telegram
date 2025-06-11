@@ -4,7 +4,7 @@ from typing import Any
 
 from aiogram import types
 
-from nespresso.bot.lib.messaging.stream import SendDocument
+from nespresso.bot.lib.message.io import SendDocument
 from nespresso.core.configs.paths import DIR_TEMP
 
 

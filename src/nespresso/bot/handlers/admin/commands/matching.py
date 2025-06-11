@@ -6,13 +6,8 @@ from aiogram.filters.command import Command
 from aiogram.filters.state import StateFilter
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from nespresso.bot.handlers.client.commands.find import FindCallbackData
-from nespresso.bot.lib.messaging.filters import AdminFilter
-from nespresso.bot.lib.messaging.stream import (
-    ReceiveCallback,
-    ReceiveMessage,
-    SendMessage,
-)
+from nespresso.bot.lib.message.filters import AdminFilter
+from nespresso.bot.lib.message.io import SendMessage
 from nespresso.recsys.matching.schedule import (
     GetNextMatchingTime,
     PauseMatching,
@@ -46,8 +41,6 @@ def MatchingKeyboard(actions: list[MatchingAction]) -> InlineKeyboardMarkup:
 
 @router.message(Command("matching"), StateFilter(None), AdminFilter())
 async def CommandMatching(message: types.Message) -> None:
-    await ReceiveMessage(message)
-
     next_run_time = GetNextMatchingTime()
 
     if next_run_time is None:
@@ -68,11 +61,7 @@ async def CommandMatching(message: types.Message) -> None:
 
 
 @router.callback_query(MatchingCallbackData.filter(F.action == MatchingAction.Resume))
-async def CommandMatchingResume(
-    callback_query: types.CallbackQuery,
-    callback_data: FindCallbackData,
-) -> None:
-    await ReceiveCallback(callback_query, callback_data)
+async def CommandMatchingResume(callback_query: types.CallbackQuery) -> None:
     assert isinstance(callback_query.message, types.Message)
 
     ResumeMatching()
@@ -87,11 +76,7 @@ async def CommandMatchingResume(
 
 
 @router.callback_query(MatchingCallbackData.filter(F.action == MatchingAction.Pause))
-async def CommandMatchingPause(
-    callback_query: types.CallbackQuery,
-    callback_data: FindCallbackData,
-) -> None:
-    await ReceiveCallback(callback_query, callback_data)
+async def CommandMatchingPause(callback_query: types.CallbackQuery) -> None:
     assert isinstance(callback_query.message, types.Message)
 
     PauseMatching()
@@ -104,11 +89,7 @@ async def CommandMatchingPause(
 
 
 @router.callback_query(MatchingCallbackData.filter(F.action == MatchingAction.Leave))
-async def CommandMatchingCancel(
-    callback_query: types.CallbackQuery,
-    callback_data: FindCallbackData,
-) -> None:
-    await ReceiveCallback(callback_query, callback_data)
+async def CommandMatchingCancel(callback_query: types.CallbackQuery) -> None:
     assert isinstance(callback_query.message, types.Message)
 
     await callback_query.message.edit_reply_markup(reply_markup=None)

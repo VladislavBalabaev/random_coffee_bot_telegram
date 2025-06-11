@@ -10,13 +10,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from nespresso.bot.lib.messaging.checks import CheckVerified
-from nespresso.bot.lib.messaging.stream import (
-    MsgContext,
-    ReceiveCallback,
-    ReceiveMessage,
-    SendMessage,
-)
+from nespresso.bot.lib.message.checks import CheckVerified
+from nespresso.bot.lib.message.io import ContextIO, SendMessage
 from nespresso.recsys.searching.preprocessing.embedding import CalculateTokenLen
 from nespresso.recsys.searching.preprocessing.model import TOKEN_LEN
 from nespresso.recsys.searching.search import SEARCHES, Page, ScrollingSearch
@@ -76,8 +71,6 @@ class FindStates(StatesGroup):
 
 @router.message(StateFilter(None), Command("find"))
 async def CommandFind(message: types.Message, state: FSMContext) -> None:
-    await ReceiveMessage(message)
-
     if not await CheckVerified(chat_id=message.chat.id):
         await SendMessage(
             chat_id=message.chat.id,
@@ -94,14 +87,13 @@ async def CommandFind(message: types.Message, state: FSMContext) -> None:
 
 @router.message(StateFilter(FindStates.Text), F.content_type == "text")
 async def CommandFindText(message: types.Message, state: FSMContext) -> None:
-    await ReceiveMessage(message)
     assert message.text is not None
 
     if CalculateTokenLen(message.text) > TOKEN_LEN:
         await SendMessage(
             chat_id=message.chat.id,
             text=f"Your text is too long.\nPlease, reduce it by {PrecentageToReduce(message.text)}%",
-            context=MsgContext.UserFailed,
+            context=ContextIO.UserFailed,
         )
         return
 
@@ -138,7 +130,6 @@ async def CommandFindCallback(
     callback_query: types.CallbackQuery,
     callback_data: FindCallbackData,
 ) -> None:
-    await ReceiveCallback(callback_query, callback_data)
     assert isinstance(callback_query.message, types.Message)
 
     search_id = callback_data.search_id

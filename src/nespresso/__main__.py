@@ -6,6 +6,7 @@ from nespresso.bot.handlers.common.register import (
     RegisterHandlerCancel,
     RegisterHandlerZeroMessage,
 )
+from nespresso.bot.lib.message.middleware import SetBotMiddleware
 from nespresso.bot.lib.notifications import admin
 from nespresso.bot.lib.notifications.erroring import SetExceptionHandlers
 from nespresso.bot.lib.notifications.pending import ProcessPendingUpdates
@@ -34,6 +35,7 @@ async def OnStartup() -> None:
     RegisterAdminHandlers(dp)
     RegisterClientHandlers(dp)
     RegisterHandlerZeroMessage(dp)
+    SetBotMiddleware(dp)
 
     await admin.NotifyOnStartup()
     await ProcessPendingUpdates()
