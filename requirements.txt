@@ -4,6 +4,8 @@ huggingface-hub==0.32.0
 sentence-transformers==4.1.0
 keybert==0.9.0
 opensearch-py[async]==2.8.0
+emoji==2.14.1
+apscheduler==3.11.0
 fastapi[standard]==0.115.12
 SQLAlchemy[asyncio]==2.0.40
 aiosmtplib==4.0.1
