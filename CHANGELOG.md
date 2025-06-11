@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Matching Framework
 - Schedulling of matching
 - Dispatcher middleware message handling
+- Blocking functionality
 
 ### Updated
 

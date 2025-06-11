@@ -53,14 +53,6 @@ class UserService:
 
         return result
 
-    async def GetActiveMatchingTgUsersChatId(self) -> list[int]:
-        result = await self.GetTgUsersOnCondition(
-            condition=TgUser.active_matching,
-            column=TgUser.chat_id,
-        )
-
-        return result
-
     # --- Update ---
 
     # --- Delete ---

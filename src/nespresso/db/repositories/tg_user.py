@@ -1,5 +1,5 @@
 import logging
-from typing import Any, overload
+from typing import TypeVar, overload
 
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -12,6 +12,8 @@ from nespresso.db.repositories.checking import (
     CheckColumnBelongsToModel,
     CheckOnlyOneArgProvided,
 )
+
+T = TypeVar("T")
 
 
 class TgUserRepository:
@@ -47,14 +49,14 @@ class TgUserRepository:
     async def GetTgUsersOnCondition(
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
-        column: InstrumentedAttribute[Any],
-    ) -> list[Any]: ...
+        column: InstrumentedAttribute[T],
+    ) -> list[T]: ...
 
     async def GetTgUsersOnCondition(
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
-        column: InstrumentedAttribute[Any] | None = None,
-    ) -> list[TgUser] | list[Any]:
+        column: InstrumentedAttribute[T] | None = None,
+    ) -> list[TgUser] | list[T]:
         selection = TgUser
         if column is not None:
             CheckColumnBelongsToModel(column, TgUser)
@@ -76,14 +78,14 @@ class TgUserRepository:
     async def GetTgUser(
         self,
         chat_id: int,
-        column: InstrumentedAttribute[Any],
-    ) -> Any | None: ...
+        column: InstrumentedAttribute[T],
+    ) -> T | None: ...
 
     async def GetTgUser(
         self,
         chat_id: int,
-        column: InstrumentedAttribute[Any] | None = None,
-    ) -> TgUser | Any | None:
+        column: InstrumentedAttribute[T] | None = None,
+    ) -> TgUser | T | None:
         result = await self.GetTgUsersOnCondition(
             condition=TgUser.chat_id == chat_id,
             column=column,
@@ -124,8 +126,8 @@ class TgUserRepository:
     async def UpdateTgUser(
         self,
         chat_id: int,
-        column: InstrumentedAttribute[Any],
-        value: Any,
+        column: InstrumentedAttribute[T],
+        value: T,
     ) -> None:
         CheckColumnBelongsToModel(column, TgUser)
 

@@ -53,14 +53,7 @@ class TgUser(Base):
         nullable=False,
         default=False,
     )
-    active_matching: Mapped[bool] = mapped_column(
-        Boolean,
-        nullable=False,
-        default=False,
-    )
-    # TODO: create functionality to block: does unverified & inactive matching, sets blocked_by_bot
-    # TODO: add checks for blocked_by_bot at /start
-    blocked_by_bot: Mapped[bool] = mapped_column(
+    blocked: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
         default=False,

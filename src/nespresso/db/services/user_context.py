@@ -33,6 +33,3 @@ async def GetUserContextService() -> UserContextService:
     message_service = MessageService(message_repo)
 
     return UserContextService(user_service, message_service)
-
-
-user_ctx = GetUserContextService

@@ -11,18 +11,13 @@ from nespresso.core.logs.settings import (
 
 
 async def LoggerSetup() -> QueueListener:
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
-    logging.getLogger("aiogram").setLevel(logging.INFO)
-    logging.getLogger("opensearch").setLevel(logging.INFO)
-    logging.getLogger("filelock").setLevel(logging.INFO)
-
-    # ─── Bot Handlers ───
     console_handler = CreateConsoleHandler(
         logging.INFO,
         filters=[
             FilterOutLogs("sqlalchemy.engine", logging.WARNING),
             FilterOutLogs("aiogram", logging.WARNING),
             FilterOutLogs("opensearch", logging.WARNING),
+            FilterOutLogs("apscheduler.scheduler", logging.WARNING),
         ],
     )
     bot_file_handler = CreateFileHandler(
@@ -30,7 +25,6 @@ async def LoggerSetup() -> QueueListener:
         logging.DEBUG,
     )
 
-    # ─── Queue ───
     listener: QueueListener = CreateListener(console_handler, bot_file_handler)
 
     return listener

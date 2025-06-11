@@ -11,7 +11,7 @@ from nespresso.bot.handlers.client.email.verification import CreateCode
 from nespresso.bot.lib.message.checks import CheckVerified
 from nespresso.bot.lib.message.io import ContextIO, SendMessage
 from nespresso.db.models.tg_user import TgUser
-from nespresso.db.services.user_context import user_ctx
+from nespresso.db.services.user_context import GetUserContextService
 
 router = Router()
 
@@ -76,7 +76,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
         )
         return
 
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
     await ctx.UpdateTgUser(
         chat_id=message.chat.id,
         column=TgUser.phone_number,
@@ -111,7 +111,7 @@ async def CommandStartEmailGet(message: types.Message, state: FSMContext) -> Non
         )
         return
 
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
     await ctx.UpdateTgUser(
         chat_id=message.chat.id,
         column=TgUser.nes_email,
@@ -153,7 +153,7 @@ async def CommandStartEmailConfirm(message: types.Message, state: FSMContext) ->
         )
         return
 
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
     await ctx.UpdateTgUser(
         chat_id=message.chat.id,
         column=TgUser.verified,

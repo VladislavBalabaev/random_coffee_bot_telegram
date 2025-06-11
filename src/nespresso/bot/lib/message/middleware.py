@@ -5,7 +5,11 @@ from aiogram import BaseMiddleware, Dispatcher
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery, Message
 
-from nespresso.bot.lib.message.io import ReceiveCallback, ReceiveMessage
+from nespresso.bot.lib.chat.block import CheckIfBlocked
+from nespresso.bot.lib.message.io import (
+    ReceiveCallback,
+    ReceiveMessage,
+)
 
 
 class MessageLoggingMiddleware(BaseMiddleware):
@@ -15,6 +19,9 @@ class MessageLoggingMiddleware(BaseMiddleware):
         event: Message,  # type: ignore[override]
         data: dict[str, Any],
     ) -> Any:
+        if await CheckIfBlocked(event.chat.id):
+            return
+
         await ReceiveMessage(event)
 
         return await handler(event, data)
@@ -27,12 +34,15 @@ class CallbackLoggingMiddleware(BaseMiddleware):
         event: CallbackQuery,  # type: ignore[override]
         data: dict[str, Any],
     ) -> Any:
+        if await CheckIfBlocked(event.from_user.id):
+            return
+
         callback_data = data.get("callback_data")
         assert isinstance(callback_data, CallbackData)
 
         await ReceiveCallback(
-            callback_query=event,
-            callback_data=callback_data,
+            query=event,
+            data=callback_data,
         )
 
         return await handler(event, data)

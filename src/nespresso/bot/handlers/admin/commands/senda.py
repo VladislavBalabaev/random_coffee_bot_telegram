@@ -6,7 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from nespresso.bot.lib.message.filters import AdminFilter
 from nespresso.bot.lib.message.io import PersonalMsg, SendMessage, SendMessagesToGroup
-from nespresso.db.services.user_context import user_ctx
+from nespresso.db.services.user_context import GetUserContextService
 
 router = Router()
 
@@ -25,8 +25,8 @@ async def CommandSenda(message: types.Message, state: FSMContext) -> None:
 async def CommandSendaMessage(message: types.Message, state: FSMContext) -> None:
     assert message.text is not None
 
-    ctx = await user_ctx()
-    chat_ids = await ctx.GetActiveTgUsersChatId()
+    ctx = await GetUserContextService()
+    chat_ids = await ctx.GetVerifiedTgUsersChatId()
 
     messages = [PersonalMsg(chat_id=chat_id, text=message.text) for chat_id in chat_ids]
     await SendMessagesToGroup(messages)

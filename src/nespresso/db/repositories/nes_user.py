@@ -1,5 +1,5 @@
 import logging
-from typing import Any, overload
+from typing import TypeVar, overload
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
@@ -11,6 +11,8 @@ from nespresso.db.models.nes_user import NesUser
 from nespresso.db.repositories.checking import (
     CheckColumnBelongsToModel,
 )
+
+T = TypeVar("T")
 
 
 class NesUserRepository:
@@ -58,14 +60,14 @@ class NesUserRepository:
     async def GetNesUsersOnCondition(
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
-        column: InstrumentedAttribute[Any],
-    ) -> list[Any] | None: ...
+        column: InstrumentedAttribute[T],
+    ) -> list[T] | None: ...
 
     async def GetNesUsersOnCondition(
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
-        column: InstrumentedAttribute[Any] | None = None,
-    ) -> list[NesUser] | list[Any] | None:
+        column: InstrumentedAttribute[T] | None = None,
+    ) -> list[NesUser] | list[T] | None:
         selection = NesUser
         if column is not None:
             CheckColumnBelongsToModel(column, NesUser)
@@ -87,14 +89,14 @@ class NesUserRepository:
     async def GetNesUser(
         self,
         nes_id: int,
-        column: InstrumentedAttribute[Any],
-    ) -> Any | None: ...
+        column: InstrumentedAttribute[T],
+    ) -> T | None: ...
 
     async def GetNesUser(
         self,
         nes_id: int,
-        column: InstrumentedAttribute[Any] | None = None,
-    ) -> NesUser | Any | None:
+        column: InstrumentedAttribute[T] | None = None,
+    ) -> NesUser | T | None:
         result = await self.GetNesUsersOnCondition(
             condition=NesUser.nes_id == nes_id,
             column=column,

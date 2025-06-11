@@ -6,7 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from nespresso.bot.lib.message.filters import AdminFilter
 from nespresso.bot.lib.message.io import ContextIO, SendMessage
-from nespresso.db.services.user_context import user_ctx
+from nespresso.db.services.user_context import GetUserContextService
 
 router = Router()
 
@@ -29,7 +29,7 @@ async def CommandSend(
         )
         return
 
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
     chat_id = await ctx.GetTgChatIdBy(tg_username=command.args.replace("@", "").strip())
 
     if chat_id is None:

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from nespresso.bot.lib.chat.username import GetChatTgUsername
-from nespresso.db.services.user_context import user_ctx
+from nespresso.bot.lib.chat.username import GetTgUsername
+from nespresso.db.services.user_context import GetUserContextService
 
 
 @dataclass
@@ -17,7 +17,7 @@ class Profile:
 
     @classmethod
     async def FromNesId(cls, nes_id: int) -> Profile:
-        ctx = await user_ctx()
+        ctx = await GetUserContextService()
 
         chat_id = await ctx.GetTgChatIdBy(nes_id)
 
@@ -28,7 +28,7 @@ class Profile:
         about = "[no self description]"
 
         if chat_id:
-            if tg := await GetChatTgUsername(chat_id):
+            if tg := await GetTgUsername(chat_id):
                 username = tg
 
             if tg_user := await ctx.GetTgUser(chat_id=chat_id):

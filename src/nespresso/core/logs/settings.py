@@ -9,6 +9,12 @@ from typing import Any
 from colorlog import ColoredFormatter
 from pythonjsonlogger.json import JsonFormatter
 
+logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+logging.getLogger("aiogram").setLevel(logging.INFO)
+logging.getLogger("opensearch").setLevel(logging.INFO)
+logging.getLogger("filelock").setLevel(logging.INFO)
+logging.getLogger("apscheduler.scheduler").setLevel(logging.INFO)
+
 _CONSOLE_FORMAT = ColoredFormatter(
     "%(log_color)s%(levelname)-8s%(reset)s :: %(asctime)s.%(msecs)03d :: %(message)s",
     datefmt="%m-%d %H:%M:%S",

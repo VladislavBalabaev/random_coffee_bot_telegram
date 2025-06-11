@@ -23,9 +23,17 @@ async def UpsertTextOpenSearch(
         index=INDEX_NAME,
         id=nes_id,
         body=body,
-        refresh=True,  # immediately makes doc visible to search
+        refresh=True,
     )
 
-    logging.info(
-        f"nes_id={nes_id} :: Document '{side.value}' side upserted successfully."
+    logging.info(f"nes_id={nes_id} :: Document '{side.value}' side upserted.")
+
+
+async def DeleteUserOpenSearch(nes_id: int) -> None:
+    await client.delete(
+        index=INDEX_NAME,
+        id=nes_id,
+        refresh=True,
     )
+
+    logging.info(f"nes_id={nes_id} :: Document deleted.")

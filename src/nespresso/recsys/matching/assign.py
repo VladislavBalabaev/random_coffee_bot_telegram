@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from nespresso.bot.lib.message.io import PersonalMsg, SendMessagesToGroup
 from nespresso.db.models.tg_user import TgUser
-from nespresso.db.services.user_context import user_ctx
+from nespresso.db.services.user_context import GetUserContextService
 from nespresso.recsys.matching.emoji import RandomEmoji
 from nespresso.recsys.profile import Profile
 
@@ -38,15 +38,15 @@ def MatchUsers(chat_ids: list[int]) -> list[Pair]:
 
 
 async def CreateMatching() -> list[Pair]:
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
 
-    chat_ids = await ctx.GetActiveTgUsersChatId()
+    chat_ids = await ctx.GetVerifiedTgUsersChatId()
 
     return MatchUsers(chat_ids)
 
 
 async def SendMatchingInfo(pairs: list[Pair]) -> None:
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
 
     messages: list[PersonalMsg] = []
     for pair in pairs:

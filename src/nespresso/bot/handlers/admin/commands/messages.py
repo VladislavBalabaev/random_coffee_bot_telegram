@@ -5,7 +5,7 @@ from aiogram.filters.state import StateFilter
 from nespresso.bot.lib.message.file import SendTemporaryFileFromText, ToJSONText
 from nespresso.bot.lib.message.filters import AdminFilter
 from nespresso.bot.lib.message.io import ContextIO, SendMessage
-from nespresso.db.services.user_context import user_ctx
+from nespresso.db.services.user_context import GetUserContextService
 
 router = Router()
 
@@ -22,7 +22,7 @@ async def CommandMessages(message: types.Message, command: CommandObject) -> Non
 
     tg_username, limit = command.args.split()
 
-    ctx = await user_ctx()
+    ctx = await GetUserContextService()
     chat_id = await ctx.GetTgChatIdBy(tg_username=tg_username.replace("@", ""))
 
     if chat_id is None:

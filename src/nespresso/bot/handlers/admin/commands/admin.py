@@ -17,7 +17,7 @@ See messages of a user
 Send message to a user
 
 /senda
-Send messages to all active users
+Send messages to all verified users
 
 /matching
 State of schedulling of matching
