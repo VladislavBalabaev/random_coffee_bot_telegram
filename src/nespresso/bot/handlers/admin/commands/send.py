@@ -21,7 +21,9 @@ class SendStates(StatesGroup):
 
 @router.message(Command("send"), StateFilter(None), AdminFilter())
 async def CommandSend(
-    message: types.Message, command: CommandObject, state: FSMContext
+    message: types.Message,
+    command: CommandObject,
+    state: FSMContext,
 ) -> None:
     await ReceiveMessage(message)
 
@@ -46,6 +48,7 @@ async def CommandSend(
         return
 
     await SendMessage(chat_id=message.chat.id, text="Input text of message")
+
     await state.set_state(SendStates.Message)
     await state.set_data({"chat_id": chat_id})
 
@@ -57,7 +60,11 @@ async def CommandSendMessage(message: types.Message, state: FSMContext) -> None:
 
     data = await state.get_data()
 
-    await SendMessage(chat_id=data["chat_id"], text=message.text)
+    output = await SendMessage(chat_id=data["chat_id"], text=message.text)
 
-    await SendMessage(chat_id=message.chat.id, text="Done")
+    if output:
+        await SendMessage(chat_id=message.chat.id, text="Successful")
+    else:
+        await SendMessage(chat_id=message.chat.id, text="Unsuccessful")
+
     await state.clear()

@@ -89,6 +89,7 @@ async def SendMessage(
         await ctx.RegisterOutgoingMessage(message)
     except TelegramForbiddenError:
         addendum = MsgContext.Blocked
+        # TODO: make his matching inactive & but DON'T make him unverified
     except TelegramBadRequest:
         addendum = MsgContext.BadRequest
 

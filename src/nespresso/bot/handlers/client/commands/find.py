@@ -17,8 +17,8 @@ from nespresso.bot.lib.messaging.stream import (
     ReceiveMessage,
     SendMessage,
 )
-from nespresso.recsys.preprocessing.embedding import CalculateTokenLen
-from nespresso.recsys.preprocessing.model import TOKEN_LEN
+from nespresso.recsys.searching.preprocessing.embedding import CalculateTokenLen
+from nespresso.recsys.searching.preprocessing.model import TOKEN_LEN
 from nespresso.recsys.searching.search import SEARCHES, Page, ScrollingSearch
 
 router = Router()
@@ -27,7 +27,8 @@ router = Router()
 def PrecentageToReduce(text: str) -> int:
     length = CalculateTokenLen(text)
 
-    return math.ceil((length - TOKEN_LEN) / length * 10) * 10
+    result: int = math.ceil((length - TOKEN_LEN) / length * 10)
+    return result * 10
 
 
 class FindAction(str, Enum):
@@ -40,7 +41,7 @@ class FindCallbackData(CallbackData, prefix="find"):
     search_id: uuid.UUID
 
 
-def MarkupKeyboard(
+def FindKeyboard(
     search_id: uuid.UUID,
     prev: bool = False,
     next: bool = False,
@@ -126,7 +127,7 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
     await SendMessage(
         chat_id=message.chat.id,
         text=page.GetFormattedText(),
-        reply_markup=MarkupKeyboard(search_id=search_id, next=True),
+        reply_markup=FindKeyboard(search_id=search_id, next=True),
     )
 
     await state.clear()
@@ -157,7 +158,7 @@ async def CommandFindCallback(
 
         if page is None:
             await callback_query.message.edit_reply_markup(
-                reply_markup=MarkupKeyboard(
+                reply_markup=FindKeyboard(
                     search_id=search_id,
                     prev=search.index > 0,
                 )
@@ -166,7 +167,7 @@ async def CommandFindCallback(
 
             return
 
-    markup = MarkupKeyboard(
+    markup = FindKeyboard(
         search_id=search_id,
         prev=search.CanScrollFutherBackward(),
         next=search.CanScrollFutherForward(),

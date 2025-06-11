@@ -16,8 +16,8 @@ from nespresso.core.logs import flow as logs
 from nespresso.core.logs.bot import LoggerSetup
 from nespresso.db.session import EnsureDB
 from nespresso.recsys.matching.schedule import (
-    ShutdownMatchingSchedulling,
-    StartMatchingSchedulling,
+    ShutdownMatching,
+    StartMatching,
 )
 from nespresso.recsys.searching.client import CloseOpenSearchClient
 from nespresso.recsys.searching.index import EnsureOpenSearchIndex
@@ -38,14 +38,14 @@ async def OnStartup() -> None:
     await admin.NotifyOnStartup()
     await ProcessPendingUpdates()
 
-    StartMatchingSchedulling()
+    StartMatching()
 
 
 async def OnShutdown() -> None:
     await admin.NotifyOnShutdown()
 
     await CloseOpenSearchClient()
-    ShutdownMatchingSchedulling()
+    ShutdownMatching()
 
     await logs.LoggerShutdown()
 

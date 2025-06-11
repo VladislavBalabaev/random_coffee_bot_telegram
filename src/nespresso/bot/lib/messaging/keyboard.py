@@ -3,7 +3,7 @@ from enum import Enum
 from aiogram import types
 
 
-def CreateKeyboard(
+def CreateReplyKeyboard(
     choices: type[Enum], max_buttons_per_row: int = 3
 ) -> types.ReplyKeyboardMarkup:
     choices_list = list(choices)

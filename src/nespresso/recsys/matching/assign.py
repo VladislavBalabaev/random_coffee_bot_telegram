@@ -57,7 +57,9 @@ async def SendMatchingInfo(pairs: list[Pair]) -> None:
         assert assigned_nes_id is not None
 
         if assigned_nes_id is None:
-            logging.error(f"chat_id={pair.assigned.chat_id} doesn't have nes_id while participating in matching")
+            logging.error(
+                f"chat_id={pair.assigned.chat_id} doesn't have nes_id while participating in matching"
+            )
             continue
 
         profile = await Profile.FromNesId(assigned_nes_id)
