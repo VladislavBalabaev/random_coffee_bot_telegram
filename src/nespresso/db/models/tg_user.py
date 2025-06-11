@@ -9,24 +9,64 @@ from nespresso.db.base import Base
 class TgUser(Base):
     __tablename__ = "tg_user"
 
-    chat_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    # --- primary key ---
 
-    nes_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=True)
-    nes_email: Mapped[str] = mapped_column(String, index=True, nullable=True)
-    username: Mapped[str] = mapped_column(String, index=True, nullable=True)
-    phone_number: Mapped[str] = mapped_column(String, index=True, nullable=True)
-
-    full_name: Mapped[str] = mapped_column(String, nullable=True)
-
-    blocked_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    blocked_by_bot: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-
-    verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    active_matching: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
+    chat_id: Mapped[int] = mapped_column(
+        BigInteger,
+        primary_key=True,
     )
 
-    about: Mapped[str] = mapped_column(String, nullable=True)
+    # --- secondary keys ---
+
+    nes_id: Mapped[int] = mapped_column(
+        BigInteger,
+        index=True,
+        nullable=True,
+    )
+    nes_email: Mapped[str] = mapped_column(
+        String,
+        index=True,
+        nullable=True,
+    )
+    username: Mapped[str] = mapped_column(
+        String,
+        index=True,
+        nullable=True,
+    )
+    phone_number: Mapped[str] = mapped_column(
+        String,
+        index=True,
+        nullable=True,
+    )
+
+    # --- description ---
+
+    about: Mapped[str] = mapped_column(
+        String,
+        nullable=True,
+    )
+
+    # --- state ---
+
+    verified: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
+    active_matching: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
+    # TODO: create functionality to block: does unverified & inactive matching, sets blocked_by_bot
+    # TODO: add checks for blocked_by_bot at /start
+    blocked_by_bot: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
+
+    # --- time ---
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

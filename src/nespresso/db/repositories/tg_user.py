@@ -50,20 +50,20 @@ class TgUserRepository:
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
         column: None = None,
-    ) -> list[TgUser] | None: ...
+    ) -> list[TgUser]: ...
 
     @overload
     async def GetTgUsersOnCondition(
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
         column: InstrumentedAttribute[Any],
-    ) -> list[Any] | None: ...
+    ) -> list[Any]: ...
 
     async def GetTgUsersOnCondition(
         self,
         condition: ColumnElement[bool] | InstrumentedAttribute[bool],
         column: InstrumentedAttribute[Any] | None = None,
-    ) -> list[TgUser] | list[Any] | None:
+    ) -> list[TgUser] | list[Any]:
         selection = TgUser
         if column is not None:
             CheckColumnBelongsToModel(column, TgUser)
