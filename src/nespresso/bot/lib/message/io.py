@@ -9,7 +9,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiolimiter import AsyncLimiter
 
 from nespresso.bot.lib.chat.block import UserBlockedBot
-from nespresso.bot.lib.chat.username import GetTgUsername
+from nespresso.bot.lib.chat.username import GetChatUserLoggingPart
 from nespresso.bot.lifecycle.creator import bot
 from nespresso.db.services.user_context import GetUserContextService
 
@@ -30,12 +30,6 @@ class ContextIO(str, Enum):
 class SignIO(str, Enum):
     In = "\033[35m>>\033[0m"
     Out = "\033[36m<<\033[0m"
-
-
-async def GetChatUserLoggingPart(chat_id: int) -> str:
-    username = await GetTgUsername(chat_id) or "-/-"
-
-    return f"chat_id={chat_id:<10} ({username + ")":<25}"
 
 
 async def SendDocument(
@@ -128,18 +122,19 @@ async def SendMessagesToGroup(messages: list[PersonalMsg]) -> None:
     await asyncio.gather(*tasks)
 
 
+async def _CheckNewUser(chat_id: int) -> None:
+    ctx = await GetUserContextService()
+    exists = await ctx.CheckTgUserExists(chat_id)
+
+    if exists:
+        return
+
+    await ctx.RegisterTgUser(chat_id=chat_id)
+
+
 async def ReceiveMessage(message: types.Message) -> None:
-    async def CheckNewUser(chat_id: int) -> None:
-        ctx = await GetUserContextService()
-        exists = await ctx.CheckTgUserExists(chat_id)
-
-        if exists:
-            return
-
-        await ctx.RegisterTgUser(chat_id=chat_id)
-
     chat_id = message.chat.id
-    await CheckNewUser(chat_id)
+    await _CheckNewUser(chat_id)
 
     part = await GetChatUserLoggingPart(chat_id)
     logging.info(f"{part} {SignIO.In.value} {repr(message.text)}")
@@ -150,6 +145,7 @@ async def ReceiveMessage(message: types.Message) -> None:
 
 async def ReceiveCallback(query: types.CallbackQuery, data: CallbackData) -> None:
     chat_id = query.from_user.id
+    await _CheckNewUser(chat_id)
 
     part = await GetChatUserLoggingPart(chat_id)
     logging.info(

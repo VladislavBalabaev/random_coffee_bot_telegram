@@ -19,6 +19,9 @@ Send message to a user
 /senda
 Send messages to all verified users
 
+/blocking
+State whether user block or not
+
 /matching
 State of schedulling of matching
 """

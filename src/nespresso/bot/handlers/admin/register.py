@@ -2,6 +2,7 @@ from aiogram import Dispatcher
 
 from nespresso.bot.handlers.admin.commands import (
     admin,
+    blocking,
     logs,
     matching,
     messages,
@@ -17,5 +18,6 @@ def RegisterAdminHandlers(dp: Dispatcher) -> None:
         messages.router,
         send.router,
         senda.router,
+        blocking.router,
         matching.router,
     )

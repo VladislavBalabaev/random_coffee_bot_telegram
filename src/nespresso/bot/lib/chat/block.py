@@ -1,5 +1,6 @@
 import logging
 
+from nespresso.bot.lib.chat.username import GetChatUserLoggingPart
 from nespresso.db.models.tg_user import TgUser
 from nespresso.db.services.user_context import GetUserContextService
 from nespresso.recsys.searching.document import DeleteUserOpenSearch
@@ -10,7 +11,8 @@ async def CheckIfBlocked(chat_id: int) -> bool:
     blocked = await ctx.GetTgUser(chat_id=chat_id, column=TgUser.blocked)
 
     if blocked:
-        logging.info(f"chat_id={chat_id} messages while being blocked.")
+        part = await GetChatUserLoggingPart(chat_id)
+        logging.info(f"{part} messages while being blocked.")
 
     return blocked or False
 
@@ -42,7 +44,8 @@ async def BlockUser(chat_id: int) -> None:
 
     await _UnverifyUser(chat_id)
 
-    logging.info(f"chat_id={chat_id} blocked.")
+    part = await GetChatUserLoggingPart(chat_id)
+    logging.info(f"{part} blocked.")
 
 
 async def UnblockUser(chat_id: int) -> None:
@@ -54,7 +57,8 @@ async def UnblockUser(chat_id: int) -> None:
         value=False,
     )
 
-    logging.info(f"chat_id={chat_id} unblocked.")
+    part = await GetChatUserLoggingPart(chat_id)
+    logging.info(f"{part} unblocked.")
 
 
 async def UserBlockedBot(chat_id: int) -> None:
