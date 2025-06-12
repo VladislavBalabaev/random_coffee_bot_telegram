@@ -1,4 +1,4 @@
-from nespresso.bot.lib.message.io import ContextIO, SendMessage
+from nespresso.bot.lib.message.io import ContextIO, ReceiveMessage, SendMessage
 from nespresso.bot.lifecycle.creator import bot
 
 
@@ -18,16 +18,19 @@ async def ProcessPendingUpdates() -> None:
             if message is None:
                 continue
 
-            chat_id = message.chat.id
+            await ReceiveMessage(
+                message=message,
+                context=ContextIO.Pending,
+            )
 
-            if chat_id not in notified_users:
+            if message.chat.id not in notified_users:
                 await SendMessage(
-                    chat_id=chat_id,
+                    chat_id=message.chat.id,
                     text="Bot has been inactive.\nPlease try again!",
                     context=ContextIO.Pending,
                 )
 
-                notified_users.add(chat_id)
+                notified_users.add(message.chat.id)
 
         if updates:
             await bot.get_updates(offset=updates[-1].update_id + 1)

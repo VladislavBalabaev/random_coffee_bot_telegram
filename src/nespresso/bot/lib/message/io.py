@@ -132,12 +132,15 @@ async def _CheckNewUser(chat_id: int) -> None:
     await ctx.RegisterTgUser(chat_id=chat_id)
 
 
-async def ReceiveMessage(message: types.Message) -> None:
+async def ReceiveMessage(
+    message: types.Message,
+    context: ContextIO = ContextIO.No,
+) -> None:
     chat_id = message.chat.id
     await _CheckNewUser(chat_id)
 
     part = await GetChatUserLoggingPart(chat_id)
-    logging.info(f"{part} {SignIO.In.value} {repr(message.text)}")
+    logging.info(f"{part} {SignIO.In.value}{context.value} {repr(message.text)}")
 
     ctx = await GetUserContextService()
     await ctx.RegisterIncomingMessage(message)
