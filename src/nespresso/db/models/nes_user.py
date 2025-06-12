@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, BigInteger, Boolean, DateTime, String, text
+from sqlalchemy import JSON, BigInteger, DateTime, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from nespresso.db.base import Base
@@ -13,7 +13,6 @@ class NesUser(Base):
 
     # Personal info
     name: Mapped[str] = mapped_column(String, nullable=True)
-    address: Mapped[str] = mapped_column(String, nullable=True)
     city: Mapped[str] = mapped_column(String, nullable=True)
     region: Mapped[str] = mapped_column(String, nullable=True)
     country: Mapped[str] = mapped_column(String, nullable=True)
@@ -21,18 +20,6 @@ class NesUser(Base):
     # NES alumni info
     program: Mapped[str] = mapped_column(String, nullable=True)
     class_name: Mapped[str] = mapped_column(String, nullable=True)
-    diploma_received: Mapped[bool] = mapped_column(Boolean, nullable=True)
-
-    # Contacts
-    email_primary: Mapped[str] = mapped_column(String, nullable=True)
-    email_secondary: Mapped[str] = mapped_column(String, nullable=True)
-    mobile_phone: Mapped[str] = mapped_column(String, nullable=True)
-    work_phone: Mapped[str] = mapped_column(String, nullable=True)
-    homepage_social: Mapped[str] = mapped_column(String, nullable=True)
-
-    # NES specific
-    research_interests: Mapped[list[str]] = mapped_column(JSON, nullable=True)
-    certificates: Mapped[list[str]] = mapped_column(JSON, nullable=True)
 
     # Hobbies and expertise
     hobbies: Mapped[list[str]] = mapped_column(JSON, nullable=True)
@@ -45,10 +32,8 @@ class NesUser(Base):
     additional_work: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
 
     # Education
-    pre_nes_education: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
-    post_nes_education: Mapped[list[dict[str, str]]] = mapped_column(
-        JSON, nullable=True
-    )
+    pre_nes_educ: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
+    post_nes_educ: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

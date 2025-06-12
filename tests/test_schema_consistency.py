@@ -6,7 +6,7 @@ from sqlalchemy.sql.elements import KeyedColumnElement
 
 from nespresso.db.base import Base
 from nespresso.db.models.nes_user import NesUser
-from nespresso.db.schemas.nes_user import NesUserIn
+from nespresso.db.models.schemas.nes_user import NesUserIn
 
 ALLOWED_EXTRA_FIELDS = {"created_at", "updated_at"}
 
