@@ -19,7 +19,7 @@ from nespresso.recsys.searching.search import SEARCHES, Page, ScrollingSearch
 router = Router()
 
 
-def PrecentageToReduce(text: str) -> int:
+def PercentageToReduce(text: str) -> int:
     length = CalculateTokenLen(text)
 
     result: int = math.ceil((length - TOKEN_LEN) / length * 10)
@@ -92,7 +92,8 @@ async def CommandFindText(message: types.Message, state: FSMContext) -> None:
     if CalculateTokenLen(message.text) > TOKEN_LEN:
         await SendMessage(
             chat_id=message.chat.id,
-            text=f"Your text is too long.\nPlease, reduce it by {PrecentageToReduce(message.text)}%",
+            text="Your text is too long.\n"
+            f"Please, reduce it by {PercentageToReduce(message.text)}%",
             context=ContextIO.UserFailed,
         )
         return
@@ -160,8 +161,8 @@ async def CommandFindCallback(
 
     markup = FindKeyboard(
         search_id=search_id,
-        prev=search.CanScrollFutherBackward(),
-        next=search.CanScrollFutherForward(),
+        prev=search.CanScrollFurtherBackward(),
+        next=search.CanScrollFurtherForward(),
     )
 
     await callback_query.message.edit_text(

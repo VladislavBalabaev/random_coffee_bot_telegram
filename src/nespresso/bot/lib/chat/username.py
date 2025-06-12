@@ -32,5 +32,6 @@ async def GetTgUsername(chat_id: int) -> str | None:
 
 async def GetChatUserLoggingPart(chat_id: int) -> str:
     username = await GetTgUsername(chat_id) or "-/-"
+    username = "(" + username + ")"
 
-    return f"chat_id={chat_id:<10} ({username + ")":<25}"
+    return f"chat_id={chat_id:<10} {username:<25}"

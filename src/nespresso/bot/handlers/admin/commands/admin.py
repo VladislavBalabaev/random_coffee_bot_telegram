@@ -23,7 +23,7 @@ Send messages to all verified users
 State whether user block or not
 
 /matching
-State of schedulling of matching
+State of scheduling of matching
 """
 
 
