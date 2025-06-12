@@ -7,25 +7,29 @@ async def ProcessPendingUpdates() -> None:
     Notifies users with pending updates when the bot becomes active again.
     Retrieves any pending updates, logs the messages, and prompts users to try again.
     """
-    updates = await bot.get_updates(offset=None, timeout=1)
-
     notified_users = set()
 
-    for update in updates:
-        message = update.message
+    while True:
+        updates = await bot.get_updates(offset=None, timeout=1)
 
-        if message is None:
-            continue
+        for update in updates:
+            message = update.message
 
-        chat_id = message.chat.id
+            if message is None:
+                continue
 
-        if chat_id not in notified_users:
-            await SendMessage(
-                chat_id=chat_id,
-                text="Bot has been inactive.\nPlease try again!",
-                context=ContextIO.Pending,
-            )
+            chat_id = message.chat.id
 
-            notified_users.add(chat_id)
+            if chat_id not in notified_users:
+                await SendMessage(
+                    chat_id=chat_id,
+                    text="Bot has been inactive.\nPlease try again!",
+                    context=ContextIO.Pending,
+                )
 
-    await bot.get_updates(offset=updates[-1].update_id + 1 if updates else None)
+                notified_users.add(chat_id)
+
+        if updates:
+            await bot.get_updates(offset=updates[-1].update_id + 1)
+        else:
+            break
