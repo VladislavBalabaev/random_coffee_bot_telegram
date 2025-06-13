@@ -66,10 +66,10 @@ class NesUserIn(NesUserOut):
         default=None, description="Дополнительные места работы"
     )
 
-    pre_nes_educ: list[PreEducation] | None = Field(
+    pre_nes_education: list[PreEducation] | None = Field(
         default=None, description="Образование до РЭШ"
     )
-    post_nes_educ: list[PostEducation] | None = Field(
+    post_nes_education: list[PostEducation] | None = Field(
         default=None, description="Образование после РЭШ"
     )
 

@@ -17,27 +17,32 @@ class Profile:
 
     @classmethod
     async def FromNesId(cls, nes_id: int) -> Profile:
-        ctx = await GetUserContextService()
-
-        chat_id = await ctx.GetTgChatIdBy(nes_id)
-
         name = "-/-"
         username = "[doesn't use bot]"
         phone_number = "-/-"
         email = "-/-"
         about = "[no self description]"
 
+        ctx = await GetUserContextService()
+        chat_id = await ctx.GetTgChatIdBy(nes_id)
+
         if chat_id:
             if tg := await GetTgUsername(chat_id):
                 username = tg
 
             if tg_user := await ctx.GetTgUser(chat_id=chat_id):
-                phone_number = tg_user.phone_number
-                about = tg_user.about
+                if tg_user.phone_number:
+                    phone_number = tg_user.phone_number
+
+                if tg_user.about:
+                    about = tg_user.about
+
+                if tg_user.nes_email:
+                    email = tg_user.nes_email
 
         if nes_user := await ctx.GetNesUser(nes_id=nes_id):
-            name = nes_user.name or "-/-"
-            email = nes_user.email_primary or "-/-"
+            if nes_user.name:
+                name = nes_user.name
 
         # TODO: add programm'year and format. For that need to see the data.
 

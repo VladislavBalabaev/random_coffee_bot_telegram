@@ -26,6 +26,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.1.0] - 2025-06-13 - Vlad
+
+### Added
+
+- Upsert mynes document to opensearch on incoming
+
 ## [0.1.0] - 2025-06-12 - Vlad
 
 ### Added

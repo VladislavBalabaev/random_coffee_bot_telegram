@@ -26,7 +26,9 @@ async def UpsertTextOpenSearch(
         refresh=True,
     )
 
-    logging.info(f"nes_id={nes_id} :: Document '{side.value}' side upserted.")
+    logging.info(
+        f"nes_id={nes_id} :: Document of '{side.value}' side upserted with text: {repr(text)}."
+    )
 
 
 async def DeleteUserOpenSearch(nes_id: int) -> None:

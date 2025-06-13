@@ -32,8 +32,10 @@ class NesUser(Base):
     additional_work: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
 
     # Education
-    pre_nes_educ: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
-    post_nes_educ: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
+    pre_nes_education: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
+    post_nes_education: Mapped[list[dict[str, str]]] = mapped_column(
+        JSON, nullable=True
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
