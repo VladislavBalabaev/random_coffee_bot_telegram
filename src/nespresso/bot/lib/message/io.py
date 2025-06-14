@@ -36,6 +36,12 @@ async def SendDocument(
     chat_id: int,
     document: types.FSInputFile,
     caption: str | None = None,
+    reply_markup: (
+        types.ReplyKeyboardMarkup
+        | types.ReplyKeyboardRemove
+        | types.InlineKeyboardMarkup
+        | None
+    ) = None,
 ) -> types.Message | None:
     add = ContextIO.No
 
@@ -45,6 +51,7 @@ async def SendDocument(
             chat_id=chat_id,
             document=document,
             caption=caption,
+            reply_markup=reply_markup,
         )
 
         ctx = await GetUserContextService()

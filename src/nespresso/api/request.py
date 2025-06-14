@@ -4,7 +4,7 @@ import httpx
 async def TriggerFetchByNesEmail(email: str) -> None:
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            "https://external.nes.ru/api/trigger_fetch",
+            url="https://external.mynes.ru/api/trigger_fetch",
             params={"email": email},
             headers={"Authorization": "..."},
         )
