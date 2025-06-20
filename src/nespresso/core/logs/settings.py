@@ -31,6 +31,7 @@ _CONSOLE_FORMAT = ColoredFormatter(
 _FILE_FORMAT = JsonFormatter(
     fmt="%(levelname)s %(asctime)s %(message)s %(name)s %(filename)s %(lineno)d",
     json_ensure_ascii=False,
+    json_indent=4,
 )
 
 
