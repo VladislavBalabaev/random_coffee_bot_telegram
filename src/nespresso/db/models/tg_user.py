@@ -18,22 +18,22 @@ class TgUser(Base):
 
     # --- secondary keys ---
 
-    nes_id: Mapped[int] = mapped_column(
+    nes_id: Mapped[int | None] = mapped_column(
         BigInteger,
         index=True,
         nullable=True,
     )
-    nes_email: Mapped[str] = mapped_column(
+    nes_email: Mapped[str | None] = mapped_column(
         String,
         index=True,
         nullable=True,
     )
-    username: Mapped[str] = mapped_column(
+    username: Mapped[str | None] = mapped_column(
         String,
         index=True,
         nullable=True,
     )
-    phone_number: Mapped[str] = mapped_column(
+    phone_number: Mapped[str | None] = mapped_column(
         String,
         index=True,
         nullable=True,
@@ -41,7 +41,7 @@ class TgUser(Base):
 
     # --- description ---
 
-    about: Mapped[str] = mapped_column(
+    about: Mapped[str | None] = mapped_column(
         String,
         nullable=True,
     )
@@ -50,13 +50,13 @@ class TgUser(Base):
 
     verified: Mapped[bool] = mapped_column(
         Boolean,
-        nullable=False,
         default=False,
+        nullable=False,
     )
     blocked: Mapped[bool] = mapped_column(
         Boolean,
-        nullable=False,
         default=False,
+        nullable=False,
     )
 
     # --- time ---

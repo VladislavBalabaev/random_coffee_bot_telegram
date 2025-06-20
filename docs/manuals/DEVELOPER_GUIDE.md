@@ -95,7 +95,7 @@ python scripts/combine_files.py
 Additionally, you can use `tree` to show ChatGPT project's structure:
 
 ```bash
-tree src/nespresso/
+tree src/
 tree -I '.vscode|__pycache__|*cache|venv|data|code_combined.txt|try' --prune
 ```
 

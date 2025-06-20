@@ -12,28 +12,34 @@ class NesUser(Base):
     nes_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
 
     # Personal info
-    name: Mapped[str] = mapped_column(String, nullable=True)
-    city: Mapped[str] = mapped_column(String, nullable=True)
-    region: Mapped[str] = mapped_column(String, nullable=True)
-    country: Mapped[str] = mapped_column(String, nullable=True)
+    name: Mapped[str | None] = mapped_column(String, nullable=True)
+    city: Mapped[str | None] = mapped_column(String, nullable=True)
+    region: Mapped[str | None] = mapped_column(String, nullable=True)
+    country: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # NES alumni info
-    program: Mapped[str] = mapped_column(String, nullable=True)
-    class_name: Mapped[str] = mapped_column(String, nullable=True)
+    program: Mapped[str | None] = mapped_column(String, nullable=True)
+    class_name: Mapped[str | None] = mapped_column(String, nullable=True)
 
     # Hobbies and expertise
-    hobbies: Mapped[list[str]] = mapped_column(JSON, nullable=True)
-    industry_expertise: Mapped[list[str]] = mapped_column(JSON, nullable=True)
-    country_expertise: Mapped[list[str]] = mapped_column(JSON, nullable=True)
-    professional_expertise: Mapped[list[str]] = mapped_column(JSON, nullable=True)
+    hobbies: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    industry_expertise: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    country_expertise: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
+    professional_expertise: Mapped[list[str] | None] = mapped_column(
+        JSON, nullable=True
+    )
 
     # Work experiences
-    main_work: Mapped[dict[str, str]] = mapped_column(JSON, nullable=True)
-    additional_work: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
+    main_work: Mapped[dict[str, str] | None] = mapped_column(JSON, nullable=True)
+    additional_work: Mapped[list[dict[str, str]] | None] = mapped_column(
+        JSON, nullable=True
+    )
 
     # Education
-    pre_nes_education: Mapped[list[dict[str, str]]] = mapped_column(JSON, nullable=True)
-    post_nes_education: Mapped[list[dict[str, str]]] = mapped_column(
+    pre_nes_education: Mapped[list[dict[str, str]] | None] = mapped_column(
+        JSON, nullable=True
+    )
+    post_nes_education: Mapped[list[dict[str, str]] | None] = mapped_column(
         JSON, nullable=True
     )
 

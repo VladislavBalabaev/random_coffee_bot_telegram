@@ -40,8 +40,7 @@ async def CommandStart(message: types.Message, state: FSMContext) -> None:
 
     await SendMessage(
         chat_id=message.chat.id,
-        text="Please share your contact with us\n\n"
-        "If the button menu is hidden, click the 🎛 icon in the lower right corner",
+        text="Please share your contact with us\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
         reply_markup=keyboard,
     )
 
@@ -53,8 +52,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
     if message.contact is None:
         await SendMessage(
             chat_id=message.chat.id,
-            text="❌ Please share your phone number using the button below.\n\n"
-            "If the button menu is hidden, click the 🎛 icon in the lower right corner",
+            text="❌ Please share your phone number using the button below.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
             context=ContextIO.UserFailed,
         )
         return
@@ -62,8 +60,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
     if message.contact.user_id is None or message.from_user is None:
         await SendMessage(
             chat_id=message.chat.id,
-            text="❌ Could not retrieve your phone number since you're not a telegram user.\n"
-            "Please try again from your user profile",
+            text="❌ Could not retrieve your phone number since you're not a telegram user.\nPlease try again from your user profile",
             context=ContextIO.UserFailed,
         )
         return
@@ -71,9 +68,7 @@ async def CommandStartGetPhoneNumber(message: types.Message, state: FSMContext) 
     if message.contact.user_id != message.from_user.id:
         await SendMessage(
             chat_id=message.chat.id,
-            text="❌ You sent someone else's phone number.\n"
-            "Please share your own number.\n\n"
-            "If the button menu is hidden, click the 🎛 icon in the lower right corner",
+            text="❌ You sent someone else's phone number.\nPlease share your own number.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
             context=ContextIO.UserFailed,
         )
         return
@@ -174,8 +169,7 @@ async def CommandStartEmailConfirm(message: types.Message, state: FSMContext) ->
     await SendDocument(
         chat_id=message.chat.id,
         document=types.FSInputFile(PATH_TERMS_OF_USE),
-        caption="Read the terms of the User Agreement and confirm your consent to the processing of personal information in the Terms of Service by clicking `📄 Yes, I accept`\n\n"
-        "If the button menu is hidden, click the 🎛 icon in the lower right corner",
+        caption="Read the terms of the User Agreement and confirm your consent to the processing of personal information in the Terms of Service by clicking `📄 Yes, I accept`\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
         reply_markup=keyboard,
     )
 
@@ -193,9 +187,7 @@ async def CommandStartTerms(message: types.Message, state: FSMContext) -> None:
     if message.text != button_text:
         await SendMessage(
             chat_id=message.chat.id,
-            text="❌ Please confirm the Terms of Service by clicking `📄 Yes, I accept`\n"
-            "Without it you are not allowed to use the service.\n\n"
-            "If the button menu is hidden, click the 🎛 icon in the lower right corner",
+            text="❌ Please confirm the Terms of Service by clicking `📄 Yes, I accept`\nWithout it you are not allowed to use the service.\n\nIf the button menu is hidden, click the 🎛 icon in the lower right corner",
             context=ContextIO.UserFailed,
         )
         return
